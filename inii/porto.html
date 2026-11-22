@@ -1,0 +1,345 @@
+```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="img/flowers.png" type="image/x-icon">
+
+    <title>Flowers</title>
+
+    <style>
+        /* ===== BLUE DREAM THEME ===== */
+        :root {
+            --blue-dark: #071a35;
+            --blue-mid: #123d70;
+            --blue-light: #72c9ff;
+            --blue-pastel: #bcecff;
+            --white: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+
+            background:
+                radial-gradient(
+                    circle at 20% 20%,
+                    rgba(91, 174, 255, 0.25),
+                    transparent 35%
+                ),
+                radial-gradient(
+                    circle at 80% 80%,
+                    rgba(116, 214, 255, 0.18),
+                    transparent 35%
+                ),
+                linear-gradient(
+                    135deg,
+                    var(--blue-dark),
+                    #102f57 50%,
+                    #07172d
+                );
+
+            font-family: "Segoe UI", Arial, sans-serif;
+            color: var(--white);
+        }
+
+        /* Dekorasi cahaya di background */
+        body::before,
+        body::after {
+            content: "";
+            position: fixed;
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            filter: blur(90px);
+            opacity: 0.35;
+            pointer-events: none;
+            z-index: 0;
+            animation: floatingGlow 7s ease-in-out infinite alternate;
+        }
+
+        body::before {
+            background: #168cff;
+            top: -100px;
+            left: -80px;
+        }
+
+        body::after {
+            background: #55d8ff;
+            bottom: -100px;
+            right: -80px;
+            animation-delay: -3s;
+        }
+
+        /* ===== GREETINGS ===== */
+        .greetings {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: center;
+            gap: clamp(5px, 2vw, 16px);
+            margin-bottom: 15px;
+        }
+
+        .greetings span {
+            display: inline-block;
+            font-size: clamp(3.5rem, 12vw, 7rem);
+            font-weight: 900;
+            color: transparent;
+
+            background: linear-gradient(
+                180deg,
+                #ffffff 5%,
+                #bcecff 45%,
+                #52aaff 100%
+            );
+
+            background-clip: text;
+            -webkit-background-clip: text;
+
+            filter: drop-shadow(0 0 12px rgba(90, 190, 255, 0.35));
+            animation: letterFloat 3s ease-in-out infinite;
+            transition:
+                transform 0.4s ease,
+                filter 0.4s ease;
+            cursor: default;
+        }
+
+        /* Huruf bergerak bergantian */
+        .greetings span:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .greetings span:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+
+        .greetings span:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .greetings span:nth-child(4) {
+            animation-delay: 0.45s;
+        }
+
+        .greetings span:nth-child(5) {
+            animation-delay: 0.6s;
+        }
+
+        /* Efek hover pada setiap huruf */
+        .greetings span:hover {
+            transform: translateY(-18px) rotate(-5deg) scale(1.15);
+            filter: drop-shadow(0 0 20px #72c9ff)
+                    drop-shadow(0 0 40px #168cff);
+        }
+
+        /* ===== DESCRIPTION ===== */
+        .description {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            margin-top: 15px;
+            max-width: 650px;
+            animation: fadeIn 1.2s ease both;
+        }
+
+        .description span {
+            display: block;
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            font-weight: 600;
+            line-height: 1.7;
+            color: #f4fbff;
+            text-shadow: 0 2px 15px rgba(100, 190, 255, 0.2);
+        }
+
+        .description .sub-text {
+            font-size: clamp(0.85rem, 2.5vw, 1rem);
+            font-weight: 400;
+            color: #b9dcf7;
+            opacity: 0.9;
+            margin-top: 4px;
+        }
+
+        /* ===== BUTTON ===== */
+        .button {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: center;
+            margin-top: 35px;
+            animation: fadeIn 1.5s ease both;
+        }
+
+        .btn {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            overflow: hidden;
+
+            padding: 14px 34px;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            border-radius: 50px;
+
+            background: linear-gradient(
+                135deg,
+                #78d5ff,
+                #398cff,
+                #5574ff
+            );
+
+            color: white;
+            font-size: 1rem;
+            font-weight: 700;
+            text-decoration: none;
+            letter-spacing: 0.3px;
+
+            box-shadow:
+                0 8px 25px rgba(43, 140, 255, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+
+            transition:
+                transform 0.35s ease,
+                box-shadow 0.35s ease,
+                background 0.35s ease;
+        }
+
+        /* Kilau yang melewati tombol */
+        .btn::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -120%;
+            width: 70%;
+            height: 100%;
+            transform: skewX(-25deg);
+
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.45),
+                transparent
+            );
+
+            transition: left 0.65s ease;
+        }
+
+        .btn:hover::before {
+            left: 150%;
+        }
+
+        .btn:hover {
+            transform: translateY(-5px) scale(1.05);
+
+            box-shadow:
+                0 14px 35px rgba(43, 140, 255, 0.5),
+                0 0 25px rgba(114, 201, 255, 0.25);
+
+            background: linear-gradient(
+                135deg,
+                #a0e5ff,
+                #4a9bff,
+                #718cff
+            );
+        }
+
+        .btn:active {
+            transform: translateY(-1px) scale(0.97);
+        }
+
+        .btn:focus-visible {
+            outline: 3px solid white;
+            outline-offset: 5px;
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes letterFloat {
+            0%, 100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        @keyframes floatingGlow {
+            from {
+                transform: translate(0, 0) scale(1);
+            }
+
+            to {
+                transform: translate(30px, -20px) scale(1.2);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Menghormati pengaturan pengurangan animasi */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="greetings">
+        <!-- Silakan menambah kata sesuai keinginan -->
+        <span>H</span>
+        <span>A</span>
+        <span>L</span>
+        <span>L</span>
+        <span>O</span>
+    </div>
+
+    <div class="description">
+        <span>ada sedikit present spesial nih buat kaliann!!</span>
+
+        <br>
+
+        <span class="sub-text">
+            For the best experience, boleh naikin dulu volume device yapp 🔊
+        </span>
+    </div>
+
+    <div class="button">
+        <a href="l.html" class="btn">Klik disini ✨</a>
+    </div>
+
+</body>
+</html>
+```
