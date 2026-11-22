@@ -1,0 +1,2042 @@
+<!DOCTYPE html>
+<html lang="id"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farewell Moments - Kenangan Tak Terlupakan</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;family=Dancing+Script:wght@700&amp;family=Playfair+Display:wght@400;700&amp;display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #8A2BE2;
+            --secondary: #FF6B8B;
+            --accent: #00CED1;
+            --gold: #FFD700;
+            --dark: #0A0A1E;
+            --darker: #050510;
+            --light: #F8F9FF;
+            --gray: #A0A0C0;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            color: var(--light);
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(138, 43, 226, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(255, 107, 139, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(0, 206, 209, 0.1) 0%, transparent 50%);
+            z-index: -2;
+        }
+
+        /* Falling Animation Container */
+        .falling-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .falling-item {
+            position: absolute;
+            top: -50px;
+            font-size: 24px;
+            opacity: 0.7;
+            animation: falling linear infinite;
+            filter: drop-shadow(0 0 10px currentColor);
+        }
+
+        @keyframes falling {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1001;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            color: var(--light);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Music Player - Mobile Optimized */
+        .music-player {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 12px 20px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+            max-width: calc(100vw - 40px);
+        }
+
+        .music-player.mobile {
+            top: auto;
+            bottom: 20px;
+            right: 50%;
+            transform: translateX(50%);
+            width: 90%;
+            max-width: 400px;
+            justify-content: center;
+        }
+
+        .music-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .music-btn {
+            background: transparent;
+            border: none;
+            color: var(--light);
+            font-size: 1.1rem;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .music-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.1);
+        }
+
+        .music-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .volume-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .volume-slider {
+            width: 70px;
+            height: 4px;
+            -webkit-appearance: none;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            outline: none;
+            flex-shrink: 0;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+        }
+
+        .music-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--gray);
+            font-size: 0.85rem;
+            overflow: hidden;
+        }
+
+        .now-playing {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        .main-header {
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .title-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .main-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 5rem;
+            background: linear-gradient(45deg, var(--primary), var(--accent), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            line-height: 1.2;
+        }
+
+        .title-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 5.2rem;
+            opacity: 0.3;
+            filter: blur(10px);
+            z-index: 0;
+        }
+
+        .subtitle {
+            font-size: 1.4rem;
+            color: var(--gray);
+            max-width: 800px;
+            margin: 0 auto 25px;
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        .quote {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            color: var(--accent);
+            font-size: 1.2rem;
+            padding: 20px 40px;
+            border-left: 3px solid var(--accent);
+            background: linear-gradient(90deg, rgba(0, 206, 209, 0.1), transparent);
+            border-radius: 0 20px 20px 0;
+            display: inline-block;
+            margin-top: 20px;
+        }
+
+        /* Crew Section */
+        .crew-section {
+            margin: 60px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+            color: var(--light);
+            font-family: 'Playfair Display', serif;
+            line-height: 1.3;
+        }
+
+        .section-title span {
+            color: var(--accent);
+        }
+
+        .crew-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .crew-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 25px;
+            border: 1px solid var(--glass-border);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .crew-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(138, 43, 226, 0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+
+        .crew-card:hover::before {
+            transform: translateX(100%);
+        }
+
+        .crew-card:hover {
+            transform: translateY(-15px) scale(1.03);
+            border-color: var(--primary);
+            box-shadow: 0 25px 50px rgba(138, 43, 226, 0.3);
+        }
+
+        .card-glow {
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--primary), var(--accent), var(--secondary));
+            border-radius: 27px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .crew-card:hover .card-glow {
+            opacity: 0.3;
+        }
+
+        .crew-avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 2.2rem;
+            color: white;
+            box-shadow: 0 15px 30px rgba(138, 43, 226, 0.3);
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .crew-card:hover .crew-avatar {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 20px 40px rgba(138, 43, 226, 0.4);
+        }
+
+        .crew-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--light);
+            font-family: 'Playfair Display', serif;
+            line-height: 1.3;
+        }
+
+        .crew-role {
+            color: var(--accent);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .password-hint {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--gray);
+            display: inline-block;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: auto;
+        }
+
+        /* Send Message Button */
+        .send-message-section {
+            text-align: center;
+            margin-top: 80px;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, rgba(138, 43, 226, 0.1), rgba(0, 206, 209, 0.1));
+            border-radius: 25px;
+            border: 1px solid var(--glass-border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .send-message-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent), var(--secondary));
+        }
+
+        .send-message-title {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: var(--light);
+            font-family: 'Playfair Display', serif;
+            line-height: 1.3;
+        }
+
+        .send-message-desc {
+            color: var(--gray);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto 25px;
+            line-height: 1.6;
+        }
+
+        .send-btn {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 18px 35px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            box-shadow: 0 15px 35px rgba(138, 43, 226, 0.3);
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .send-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .send-btn:hover::before {
+            left: 100%;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(138, 43, 226, 0.4);
+        }
+
+        .send-btn i {
+            font-size: 1.2rem;
+        }
+
+        .send-btn.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: linear-gradient(45deg, #666, #888);
+        }
+
+        .send-btn.locked:hover {
+            transform: none;
+            box-shadow: 0 15px 35px rgba(138, 43, 226, 0.3);
+        }
+
+        /* Modal Styles - Mobile Optimized */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 5, 16, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(20px);
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, rgba(30, 30, 60, 0.95), rgba(20, 20, 40, 0.95));
+            padding: 35px;
+            border-radius: 25px;
+            width: 100%;
+            max-width: 500px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
+            transform: translateY(50px) scale(0.95);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0) scale(1);
+        }
+
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--accent), var(--secondary));
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: var(--light);
+            text-align: center;
+            font-family: 'Playfair Display', serif;
+            line-height: 1.3;
+        }
+
+        .modal-subtitle {
+            color: var(--gray);
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--light);
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--light);
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .form-input:focus, .form-textarea:focus {
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 3px rgba(0, 206, 209, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 15px;
+            border-radius: 12px;
+            border: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-width: 140px;
+        }
+
+        .modal-btn.primary {
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            color: white;
+        }
+
+        .modal-btn.primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(138, 43, 226, 0.3);
+        }
+
+        .modal-btn.secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--light);
+            border: 1px solid var(--glass-border);
+        }
+
+        .modal-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Message Page - Mobile Optimized */
+        .message-page {
+            min-height: 100vh;
+            padding: 30px 15px;
+            display: none;
+            opacity: 0;
+            animation: fadeIn 0.8s forwards;
+        }
+
+        .message-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .message-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 3rem;
+            color: white;
+            box-shadow: 0 20px 40px rgba(138, 43, 226, 0.3);
+            border: 5px solid rgba(255, 255, 255, 0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .message-crew-name {
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-family: 'Dancing Script', cursive;
+            line-height: 1.2;
+        }
+
+        .message-title {
+            font-size: 1.2rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+        }
+
+        .message-content {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 30px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .message-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--accent), var(--secondary));
+        }
+
+        .message-text {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: 30px;
+            color: rgba(255, 255, 255, 0.9);
+            text-align: justify;
+        }
+
+        .message-quote {
+            font-style: italic;
+            color: var(--accent);
+            padding: 20px;
+            background: linear-gradient(90deg, rgba(0, 206, 209, 0.1), transparent);
+            border-radius: 15px;
+            border-left: 4px solid var(--accent);
+            margin: 25px 0;
+            font-size: 1.1rem;
+            font-family: 'Playfair Display', serif;
+            line-height: 1.5;
+        }
+
+        .message-signature {
+            text-align: right;
+            color: var(--gray);
+            margin-top: 40px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 1.2rem;
+            font-family: 'Dancing Script', cursive;
+        }
+
+        .message-signature strong {
+            color: var(--light);
+            font-weight: 600;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 16px 30px;
+            border-radius: 50px;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 160px;
+            justify-content: center;
+            flex: 1;
+            max-width: 300px;
+        }
+
+        .action-btn.back {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--light);
+            border: 1px solid var(--glass-border);
+        }
+
+        .action-btn.back:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .action-btn.message {
+            background: linear-gradient(45deg, var(--secondary), #FF8E9E);
+            color: white;
+        }
+
+        .action-btn.message:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(255, 107, 139, 0.3);
+        }
+
+        /* Floating Elements */
+        .floating-element {
+            position: absolute;
+            z-index: -1;
+            opacity: 0.1;
+            font-size: 6rem;
+            color: var(--accent);
+            animation: floatSlow 15s ease-in-out infinite;
+        }
+
+        .fe1 { top: 10%; left: 5%; animation-delay: 0s; }
+        .fe2 { top: 20%; right: 10%; animation-delay: 2s; }
+        .fe3 { bottom: 20%; left: 10%; animation-delay: 4s; }
+        .fe4 { bottom: 10%; right: 5%; animation-delay: 6s; }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            33% { transform: translateY(-20px) rotate(120deg); }
+            66% { transform: translateY(20px) rotate(240deg); }
+        }
+
+        @keyframes glow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.8; }
+        }
+
+        /* Touch-friendly adjustments */
+        @media (hover: none) {
+            .crew-card:hover {
+                transform: none;
+            }
+            
+            .crew-card:active {
+                transform: scale(0.98);
+            }
+            
+            .send-btn:hover, .modal-btn:hover, .action-btn:hover {
+                transform: none;
+            }
+            
+            .send-btn:active, .modal-btn:active, .action-btn:active {
+                transform: scale(0.98);
+            }
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 1200px) {
+            .main-title { font-size: 4rem; }
+            .title-glow { font-size: 4.2rem; }
+        }
+
+        @media (max-width: 992px) {
+            .main-title { font-size: 3.5rem; }
+            .title-glow { font-size: 3.7rem; }
+            .crew-grid { grid-template-columns: repeat(2, 1fr); }
+            .section-title { font-size: 2.2rem; }
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: flex;
+            }
+            
+            .music-player:not(.mobile) {
+                display: none;
+            }
+            
+            .music-player.mobile {
+                display: flex;
+            }
+            
+            .main-title {
+                font-size: 3rem;
+                margin-top: 40px;
+            }
+            
+            .title-glow {
+                font-size: 3.2rem;
+            }
+            
+            .subtitle {
+                font-size: 1.2rem;
+                padding: 0 15px;
+            }
+            
+            .quote {
+                font-size: 1.1rem;
+                padding: 15px 25px;
+                margin: 15px;
+            }
+            
+            .crew-grid {
+                grid-template-columns: 1fr;
+                max-width: 400px;
+                margin-left: auto;
+                margin-right: auto;
+                gap: 20px;
+            }
+            
+            .crew-card {
+                padding: 20px;
+                min-height: 250px;
+            }
+            
+            .crew-avatar {
+                width: 80px;
+                height: 80px;
+                font-size: 2rem;
+            }
+            
+            .crew-name {
+                font-size: 1.4rem;
+            }
+            
+            .send-message-title {
+                font-size: 1.8rem;
+            }
+            
+            .send-message-desc {
+                font-size: 1rem;
+                padding: 0 10px;
+            }
+            
+            .send-btn {
+                padding: 16px 25px;
+                font-size: 1rem;
+            }
+            
+            .modal-content {
+                padding: 25px 20px;
+            }
+            
+            .modal-title {
+                font-size: 1.6rem;
+            }
+            
+            .modal-buttons {
+                flex-direction: column;
+            }
+            
+            .modal-btn {
+                width: 100%;
+            }
+            
+            .message-crew-name {
+                font-size: 2.2rem;
+            }
+            
+            .message-avatar {
+                width: 100px;
+                height: 100px;
+                font-size: 2.5rem;
+            }
+            
+            .message-content {
+                padding: 25px 20px;
+            }
+            
+            .message-text {
+                font-size: 1rem;
+            }
+            
+            .message-quote {
+                font-size: 1rem;
+                padding: 15px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .action-btn {
+                width: 100%;
+                max-width: 280px;
+            }
+            
+            .floating-element {
+                font-size: 4rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-container {
+                padding: 20px 15px;
+            }
+            
+            .main-title {
+                font-size: 2.5rem;
+            }
+            
+            .title-glow {
+                font-size: 2.7rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+                margin-bottom: 30px;
+            }
+            
+            .crew-card {
+                min-height: 230px;
+            }
+            
+            .send-message-title {
+                font-size: 1.6rem;
+            }
+            
+            .send-message-section {
+                padding: 25px 15px;
+                margin-top: 50px;
+            }
+            
+            .modal-content {
+                padding: 20px 15px;
+            }
+            
+            .modal-title {
+                font-size: 1.4rem;
+            }
+            
+            .form-input, .form-textarea {
+                padding: 14px;
+            }
+            
+            .message-crew-name {
+                font-size: 2rem;
+            }
+            
+            .message-title {
+                font-size: 1rem;
+            }
+            
+            .music-player.mobile {
+                width: 95%;
+                padding: 10px 15px;
+            }
+            
+            .volume-slider {
+                width: 50px;
+            }
+            
+            .music-info {
+                display: none;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .main-title {
+                font-size: 2.2rem;
+            }
+            
+            .crew-name {
+                font-size: 1.3rem;
+            }
+            
+            .send-btn {
+                padding: 14px 20px;
+                font-size: 0.95rem;
+            }
+            
+            .action-btn {
+                padding: 14px 20px;
+                font-size: 0.95rem;
+            }
+        }
+    </style>
+<style>
+                @keyframes shake {
+                    0%, 100% { transform: translateX(0); }
+                    25% { transform: translateX(-10px); }
+                    75% { transform: translateX(10px); }
+                }
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes fadeOut {
+                    from { opacity: 1; }
+                    to { opacity: 0; }
+                }
+            </style></head>
+<body>
+    <!-- Falling Animation -->
+    <div class="falling-container" id="fallingContainer"><div class="falling-item" style="left: 85.7019%; color: rgb(255, 107, 139); opacity: 0.7;">💌</div><div class="falling-item" style="left: 13.7735%; color: rgb(255, 107, 139); opacity: 0.7;">🌟</div><div class="falling-item" style="left: 8.36762%; color: rgb(255, 20, 147); opacity: 0.7;">🎉</div><div class="falling-item" style="left: 50.3755%; color: rgb(255, 20, 147); opacity: 0.7;">💫</div><div class="falling-item" style="left: 8.43974%; color: rgb(255, 20, 147); opacity: 0.7;">❤️</div><div class="falling-item" style="left: 54.1424%; color: rgb(255, 20, 147); opacity: 0.7;">💫</div><div class="falling-item" style="left: 67.1074%; color: rgb(255, 107, 139); opacity: 0.7;">🎉</div><div class="falling-item" style="left: 69.7484%; color: rgb(0, 206, 209); opacity: 0.7;">🎈</div><div class="falling-item" style="left: 86.212%; color: rgb(255, 215, 0); opacity: 0.7;">🎉</div><div class="falling-item" style="left: 88.7845%; color: rgb(255, 215, 0); opacity: 0.7;">✨</div><div class="falling-item" style="left: 24.1715%; color: rgb(138, 43, 226); opacity: 0.7;">🎈</div><div class="falling-item" style="left: 80.7966%; color: rgb(255, 107, 139); opacity: 0.7;">🎊</div><div class="falling-item" style="left: 52.655%; color: rgb(255, 20, 147); opacity: 0.7;">🎊</div><div class="falling-item" style="left: 44.9256%; color: rgb(255, 20, 147); opacity: 0.7;">🌸</div><div class="falling-item" style="left: 61.6809%; color: rgb(255, 20, 147); opacity: 0.7;">💌</div></div>
+
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Music Player -->
+    <div class="music-player" id="desktopMusic">
+        <div class="music-controls">
+            <button class="music-btn" id="playBtn" title="Play" aria-label="Play music" style="opacity: 1;">
+                <i class="fas fa-play"></i>
+            </button>
+            <button class="music-btn" id="pauseBtn" title="Pause" aria-label="Pause music" style="opacity: 0.5;">
+                <i class="fas fa-pause"></i>
+            </button>
+            <div class="volume-container">
+                <i class="fas fa-volume-up" style="color: var(--accent);"></i>
+                <input type="range" min="0" max="100" value="50" class="volume-slider" id="volumeSlider" title="Volume" aria-label="Volume control">
+            </div>
+        </div>
+        <div class="music-info">
+            <div class="now-playing">
+                <i class="fas fa-music" style="color: var(--accent);"></i>
+                <span id="currentTrack">Memories</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Music Player -->
+    
+
+    <!-- Floating Elements -->
+    <div class="floating-element fe1">💫</div>
+    <div class="floating-element fe2">✨</div>
+    <div class="floating-element fe3">🌟</div>
+    <div class="floating-element fe4">🎵</div>
+
+    <!-- Main Page -->
+    <div class="main-container" id="mainPage" style="display: block;">
+        <header class="main-header">
+            <div class="title-container">
+                <div class="title-glow">Farewell Moments</div>
+                <h1 class="main-title" style="transition: 0.8s; transform: scale(1);">Farewell Moments</h1>
+            </div>
+            <p class="subtitle">Dalam setiap pertemuan ada cerita, dalam setiap perpisahan ada kenangan. Mari simpan momen terakhir kita dalam halaman ini, untuk dikenang selamanya.</p>
+            <div class="quote">"Jangan menangis karena berakhir, tersenyumlah karena pernah terjadi."</div>
+        </header>
+
+        <!-- Crew Section -->
+        <section class="crew-section">
+            <h2 class="section-title">Tim <span>Spesial</span> Kita</h2>
+            <div class="crew-grid">
+                <!-- Crew Cards akan di-generate oleh JavaScript -->
+            <div class="crew-card" data-crew="Andi" data-password="kenangan123" role="button" tabindex="0" aria-label="Buka pesan dari Andi Wijaya" style="opacity: 1; transform: translateY(0px); transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+                        <div class="card-glow"></div>
+                        <div class="crew-avatar">
+                            <i class="fas fa-crown"></i>
+                        </div>
+                        <h3 class="crew-name">Andi Wijaya</h3>
+                        <div class="crew-role">Team Captain</div>
+                        <div class="password-hint">
+                            <i class="fas fa-key"></i> Password: kenangan123
+                        </div>
+                    </div><div class="crew-card" data-crew="Budi" data-password="selaluCeria" role="button" tabindex="0" aria-label="Buka pesan dari Budi Santoso" style="opacity: 1; transform: translateY(0px); transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+                        <div class="card-glow"></div>
+                        <div class="crew-avatar">
+                            <i class="fas fa-sun"></i>
+                        </div>
+                        <h3 class="crew-name">Budi Santoso</h3>
+                        <div class="crew-role">Creative Mind</div>
+                        <div class="password-hint">
+                            <i class="fas fa-key"></i> Password: selaluCeria
+                        </div>
+                    </div><div class="crew-card" data-crew="Citra" data-password="bahagia2023" role="button" tabindex="0" aria-label="Buka pesan dari Citra Lestari" style="opacity: 1; transform: translateY(0px); transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+                        <div class="card-glow"></div>
+                        <div class="crew-avatar">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <h3 class="crew-name">Citra Lestari</h3>
+                        <div class="crew-role">Design Artist</div>
+                        <div class="password-hint">
+                            <i class="fas fa-key"></i> Password: bahagia2023
+                        </div>
+                    </div><div class="crew-card" data-crew="Doni" data-password="suksesSelalu" role="button" tabindex="0" aria-label="Buka pesan dari Doni Pratama" style="opacity: 1; transform: translateY(0px); transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+                        <div class="card-glow"></div>
+                        <div class="crew-avatar">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <h3 class="crew-name">Doni Pratama</h3>
+                        <div class="crew-role">Tech Genius</div>
+                        <div class="password-hint">
+                            <i class="fas fa-key"></i> Password: suksesSelalu
+                        </div>
+                    </div><div class="crew-card" data-crew="Eka" data-password="terimaKasih" role="button" tabindex="0" aria-label="Buka pesan dari Eka Sari" style="opacity: 1; transform: translateY(0px); transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+                        <div class="card-glow"></div>
+                        <div class="crew-avatar">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <h3 class="crew-name">Eka Sari</h3>
+                        <div class="crew-role">Support Angel</div>
+                        <div class="password-hint">
+                            <i class="fas fa-key"></i> Password: terimaKasih
+                        </div>
+                    </div></div>
+        </section>
+
+        <!-- Send Message Section -->
+        <section class="send-message-section">
+            <h3 class="send-message-title">Kirim Pesan Terakhir</h3>
+            <p class="send-message-desc">Setelah membaca pesan perpisahan dari crew, kamu bisa mengirim pesan khusus untuk Nabilla melalui WhatsApp.</p>
+            <button class="send-btn" id="sendToNabillaBtn" aria-label="Send message to Nabilla" style="animation: 2s ease 0s infinite normal none running glow;">
+                    <i class="fab fa-whatsapp"></i>
+                    Kirim Pesan ke Nabilla
+                    <span style="margin-left: 10px; font-size: 0.9rem; opacity: 0.8;">(Sekarang aktif!)</span>
+                </button>
+        </section>
+    </div>
+
+    <!-- Password Modal -->
+    <div class="modal-overlay" id="passwordModal">
+        <div class="modal-content">
+            <h3 class="modal-title">Masukkan Password</h3>
+            <p class="modal-subtitle">Untuk membaca pesan rahasia dari <span id="crewNameSpan" style="color: var(--accent); font-weight: 600;">Andi</span></p>
+            
+            <div class="form-group">
+                <label class="form-label" for="passwordInput">Password Rahasia</label>
+                <input type="text" class="form-input" id="passwordInput" placeholder="Ketik password di sini..." aria-label="Password input">
+                <div style="text-align: right; margin-top: 5px;">
+                    <button id="togglePassword" style="background: none; border: none; color: var(--accent); cursor: pointer; font-size: 0.9rem;" aria-label="Toggle password visibility"><i class="fas fa-eye-slash"></i> Sembunyikan</button>
+                </div>
+            </div>
+
+            <div id="errorMessage" style="color: var(--secondary); text-align: center; margin: 15px 0; min-height: 20px;" role="alert"></div>
+
+            <div class="modal-buttons">
+                <button class="modal-btn primary" id="submitPassword" aria-label="Submit password">
+                    <i class="fas fa-unlock"></i> Buka Pesan
+                </button>
+                <button class="modal-btn secondary" id="closeModal" aria-label="Close modal">
+                    <i class="fas fa-times"></i> Batal
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Modal -->
+    <div class="modal-overlay" id="messageModal">
+        <div class="modal-content">
+            <h3 class="modal-title">Kirim Pesan ke Nabilla</h3>
+            <p class="modal-subtitle">Sampaikan kata-kata terakhirmu dengan penuh makna</p>
+            
+            <form id="messageForm">
+                <div class="form-group">
+                    <label class="form-label" for="senderName">Nama Kamu</label>
+                    <input type="text" class="form-input" id="senderName" placeholder="Masukkan nama lengkapmu..." required="" aria-label="Your name">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="senderMessage">Pesan Spesial</label>
+                    <textarea class="form-textarea" id="senderMessage" placeholder="Tulis pesan perpisahanmu di sini..." required="" aria-label="Your message"></textarea>
+                </div>
+
+                <div class="modal-buttons">
+                    <button type="submit" class="modal-btn primary" aria-label="Send via WhatsApp">
+                        <i class="fab fa-whatsapp"></i> Kirim via WhatsApp
+                    </button>
+                    <button type="button" class="modal-btn secondary" id="closeMessageModal" aria-label="Cancel">
+                        <i class="fas fa-times"></i> Batalkan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Message Page -->
+    <div class="main-container message-page" id="messagePage" style="display: none;">
+        <div class="message-header">
+            <div class="message-avatar" id="crewAvatar"><i class="fas fa-crown"></i></div>
+            <h1 class="message-crew-name" id="messageCrewName">Andi</h1>
+            <div class="message-title" id="messageRole">Team Captain</div>
+        </div>
+
+        <div class="message-content">
+            <div class="message-text" id="messageText">Hai teman-teman,<br><br>
+                        Rasanya baru kemarin kita memulai petualangan ini bersama. Sekarang, tiba saatnya kita berjalan di jalan yang berbeda. Setiap tawa, setiap perjuangan, dan setiap kemenangan bersama kalian akan selamanya terukir dalam hati.<br><br>
+                        Aku sangat bangga melihat bagaimana kita tumbuh bersama. Dari tim yang awalnya asing, menjadi keluarga yang saling mendukung. Terima kasih telah mempercayaiku memimpin kalian semua.<br><br>
+                        Ingat, perpisahan ini bukan akhir. Ini adalah babak baru dimana kita akan menulis cerita yang lebih hebat.</div>
+
+            <div class="message-quote" id="messageQuote">Pemimpin sejati tidak menciptakan pengikut, tapi menciptakan pemimpin baru.</div>
+
+            <div class="message-signature" id="messageSignature">Sampai jumpa di puncak kesuksesan,<br><strong>Andi Wijaya</strong></div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="action-btn back" id="backButton" aria-label="Go back">
+                <i class="fas fa-arrow-left"></i> Kembali
+            </button>
+            <button class="action-btn message" id="openMessageBtn" aria-label="Send message to Nabilla">
+                <i class="fab fa-whatsapp"></i> Kirim Pesan ke Nabilla
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ============================
+        // FALLING ANIMATION SYSTEM
+        // ============================
+        class FallingAnimation {
+            constructor() {
+                this.container = document.getElementById('fallingContainer');
+                this.emojis = ['✨', '🌟', '💫', '🎵', '❤️', '💌', '🌸', '🎈', '🎊', '🎉'];
+                this.colors = ['#FF6B8B', '#8A2BE2', '#00CED1', '#FFD700', '#FF1493'];
+                this.items = [];
+                this.init();
+            }
+            
+            init() {
+                this.createItems();
+                this.startAnimation();
+                
+                // Adjust for mobile performance
+                window.addEventListener('resize', () => this.adjustForMobile());
+                this.adjustForMobile();
+            }
+            
+            createItems() {
+                // Create 15 falling items for desktop, 8 for mobile
+                const count = window.innerWidth < 768 ? 8 : 15;
+                
+                for (let i = 0; i < count; i++) {
+                    const item = document.createElement('div');
+                    item.className = 'falling-item';
+                    
+                    // Random properties
+                    const emoji = this.emojis[Math.floor(Math.random() * this.emojis.length)];
+                    const color = this.colors[Math.floor(Math.random() * this.colors.length)];
+                    const size = Math.random() * 20 + 15;
+                    const left = Math.random() * 100;
+                    const duration = Math.random() * 10 + 10;
+                    const delay = Math.random() * 15;
+                    
+                    // Apply styles
+                    item.textContent = emoji;
+                    item.style.left = `${left}%`;
+                    item.style.fontSize = `${size}px`;
+                    item.style.color = color;
+                    item.style.animationDuration = `${duration}s`;
+                    item.style.animationDelay = `${delay}s`;
+                    
+                    this.container.appendChild(item);
+                    this.items.push(item);
+                }
+            }
+            
+            startAnimation() {
+                this.items.forEach(item => {
+                    // Restart animation
+                    item.style.animation = 'none';
+                    void item.offsetWidth; // Trigger reflow
+                    item.style.animation = null;
+                });
+            }
+            
+            adjustForMobile() {
+                if (window.innerWidth < 768) {
+                    // Reduce animation intensity for mobile
+                    this.items.forEach(item => {
+                        item.style.fontSize = '18px';
+                        item.style.opacity = '0.5';
+                    });
+                } else {
+                    // Restore for desktop
+                    this.items.forEach(item => {
+                        item.style.fontSize = '';
+                        item.style.opacity = '0.7';
+                    });
+                }
+            }
+            
+            clear() {
+                this.items.forEach(item => item.remove());
+                this.items = [];
+            }
+            
+            restart() {
+                this.clear();
+                this.createItems();
+            }
+        }
+
+        // ============================
+        // MUSIC SYSTEM
+        // ============================
+        class MusicSystem {
+            constructor() {
+                this.audio = new Audio();
+                this.isPlaying = false;
+                this.currentTrackIndex = 0;
+                this.volume = 0.5;
+                
+                this.playlist = [
+                    {
+                        name: "Memories",
+                        url: "https://open.spotify.com/track/3tcCT8WhAIeRW2Ey9M4bL5?si=ab8498aafe954977"
+                    },
+                    {
+                        name: "Sunset Dreams",
+                        url: "https://open.spotify.com/track/3tcCT8WhAIeRW2Ey9M4bL5?si=ab8498aafe954977"
+                    },
+                    {
+                        name: "Good Times",
+                        url: "https://open.spotify.com/track/3tcCT8WhAIeRW2Ey9M4bL5?si=ab8498aafe954977"
+                    }
+                ];
+                
+                this.init();
+            }
+            
+            init() {
+                this.audio.volume = this.volume;
+                this.loadTrack(this.currentTrackIndex);
+                
+                this.audio.addEventListener('ended', () => {
+                    this.nextTrack();
+                });
+                
+                this.audio.addEventListener('error', () => {
+                    this.showNotification('🎵 Musik tidak dapat diputar');
+                });
+            }
+            
+            loadTrack(index) {
+                this.currentTrackIndex = index % this.playlist.length;
+                const track = this.playlist[this.currentTrackIndex];
+                
+                this.audio.src = track.url;
+                document.getElementById('currentTrack').textContent = track.name;
+                
+                if (this.isPlaying) {
+                    this.audio.play().catch(() => {
+                        // Autoplay prevented
+                    });
+                }
+            }
+            
+            play() {
+                this.audio.play().then(() => {
+                    this.isPlaying = true;
+                    this.updateUI();
+                    this.showNotification(`🎵 Now Playing: ${this.playlist[this.currentTrackIndex].name}`);
+                }).catch(() => {
+                    this.showNotification('🔇 Klik tombol play untuk mulai musik');
+                });
+            }
+            
+            pause() {
+                this.audio.pause();
+                this.isPlaying = false;
+                this.updateUI();
+            }
+            
+            setVolume(value) {
+                this.volume = value / 100;
+                this.audio.volume = this.volume;
+            }
+            
+            nextTrack() {
+                this.loadTrack(this.currentTrackIndex + 1);
+                if (this.isPlaying) {
+                    this.play();
+                }
+            }
+            
+            updateUI() {
+                const elements = ['playBtn', 'pauseBtn', 'mobilePlayBtn', 'mobilePauseBtn'];
+                
+                elements.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        if (this.isPlaying) {
+                            if (id.includes('play')) element.style.opacity = '0.5';
+                            if (id.includes('pause')) element.style.opacity = '1';
+                        } else {
+                            if (id.includes('play')) element.style.opacity = '1';
+                            if (id.includes('pause')) element.style.opacity = '0.5';
+                        }
+                    }
+                });
+            }
+            
+            showNotification(text) {
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 80px;
+                    right: 20px;
+                    background: linear-gradient(45deg, var(--primary), var(--accent));
+                    color: white;
+                    padding: 12px 20px;
+                    border-radius: 10px;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                    z-index: 10000;
+                    animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+                    font-family: 'Poppins', sans-serif;
+                    font-size: 0.9rem;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    max-width: 300px;
+                `;
+                
+                notification.innerHTML = `<i class="fas fa-music"></i> ${text}`;
+                document.body.appendChild(notification);
+                
+                setTimeout(() => notification.remove(), 3000);
+            }
+        }
+
+        // ============================
+        // MAIN APPLICATION
+        // ============================
+        class FarewellApp {
+            constructor() {
+                this.fallingAnimation = new FallingAnimation();
+                this.music = new MusicSystem();
+                this.currentCrew = null;
+                this.hasReadMessage = false;
+                
+                this.initElements();
+                this.createCrewCards();
+                this.bindEvents();
+                this.initAnimations();
+                this.startMusic();
+                this.setupMobile();
+            }
+            
+            initElements() {
+                this.elements = {
+                    // Pages
+                    mainPage: document.getElementById('mainPage'),
+                    messagePage: document.getElementById('messagePage'),
+                    
+                    // Modals
+                    passwordModal: document.getElementById('passwordModal'),
+                    messageModal: document.getElementById('messageModal'),
+                    
+                    // Buttons
+                    sendToNabillaBtn: document.getElementById('sendToNabillaBtn'),
+                    openMessageBtn: document.getElementById('openMessageBtn'),
+                    backButton: document.getElementById('backButton'),
+                    mobileMenuBtn: document.getElementById('mobileMenuBtn'),
+                    
+                    // Forms
+                    passwordInput: document.getElementById('passwordInput'),
+                    togglePassword: document.getElementById('togglePassword'),
+                    submitPassword: document.getElementById('submitPassword'),
+                    closeModal: document.getElementById('closeModal'),
+                    closeMessageModal: document.getElementById('closeMessageModal'),
+                    messageForm: document.getElementById('messageForm'),
+                    senderName: document.getElementById('senderName'),
+                    senderMessage: document.getElementById('senderMessage'),
+                    
+                    // Music
+                    playBtn: document.getElementById('playBtn'),
+                    pauseBtn: document.getElementById('pauseBtn'),
+                    mobilePlayBtn: document.getElementById('mobilePlayBtn'),
+                    mobilePauseBtn: document.getElementById('mobilePauseBtn'),
+                    volumeSlider: document.getElementById('volumeSlider'),
+                    mobileVolumeSlider: document.getElementById('mobileVolumeSlider'),
+                    
+                    // Display
+                    crewNameSpan: document.getElementById('crewNameSpan'),
+                    crewAvatar: document.getElementById('crewAvatar'),
+                    messageCrewName: document.getElementById('messageCrewName'),
+                    messageRole: document.getElementById('messageRole'),
+                    messageText: document.getElementById('messageText'),
+                    messageQuote: document.getElementById('messageQuote'),
+                    messageSignature: document.getElementById('messageSignature'),
+                    errorMessage: document.getElementById('errorMessage'),
+                    
+                    // Crew grid
+                    crewGrid: document.querySelector('.crew-grid')
+                };
+            }
+            
+            createCrewCards() {
+                const crewData = [
+                    { name: "Andi Wijaya", role: "Team Captain", icon: "crown", password: "kenangan123" },
+                    { name: "Budi Santoso", role: "Creative Mind", icon: "sun", password: "selaluCeria" },
+                    { name: "Citra Lestari", role: "Design Artist", icon: "star", password: "bahagia2023" },
+                    { name: "Doni Pratama", role: "Tech Genius", icon: "rocket", password: "suksesSelalu" },
+                    { name: "Eka Sari", role: "Support Angel", icon: "heart", password: "terimaKasih" }
+                ];
+                
+                crewData.forEach(crew => {
+                    const card = document.createElement('div');
+                    card.className = 'crew-card';
+                    card.setAttribute('data-crew', crew.name.split(' ')[0]);
+                    card.setAttribute('data-password', crew.password);
+                    card.setAttribute('role', 'button');
+                    card.setAttribute('tabindex', '0');
+                    card.setAttribute('aria-label', `Buka pesan dari ${crew.name}`);
+                    
+                    card.innerHTML = `
+                        <div class="card-glow"></div>
+                        <div class="crew-avatar">
+                            <i class="fas fa-${crew.icon}"></i>
+                        </div>
+                        <h3 class="crew-name">${crew.name}</h3>
+                        <div class="crew-role">${crew.role}</div>
+                        <div class="password-hint">
+                            <i class="fas fa-key"></i> Password: ${crew.password}
+                        </div>
+                    `;
+                    
+                    this.elements.crewGrid.appendChild(card);
+                });
+            }
+            
+            bindEvents() {
+                // Crew Cards
+                document.addEventListener('click', (e) => {
+                    const card = e.target.closest('.crew-card');
+                    if (card) this.openPasswordModal(card);
+                });
+                
+                // Keyboard navigation for cards
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        const card = e.target.closest('.crew-card');
+                        if (card) {
+                            e.preventDefault();
+                            this.openPasswordModal(card);
+                        }
+                    }
+                });
+                
+                // Password Modal
+                this.elements.togglePassword.addEventListener('click', () => this.togglePasswordVisibility());
+                this.elements.submitPassword.addEventListener('click', () => this.checkPassword());
+                this.elements.closeModal.addEventListener('click', () => this.closeModal('passwordModal'));
+                this.elements.passwordInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.checkPassword();
+                });
+                
+                // Message Modal
+                this.elements.sendToNabillaBtn.addEventListener('click', () => this.openMessageModal());
+                this.elements.openMessageBtn.addEventListener('click', () => this.openMessageModal());
+                this.elements.closeMessageModal.addEventListener('click', () => this.closeModal('messageModal'));
+                this.elements.messageForm.addEventListener('submit', (e) => this.sendMessage(e));
+                
+                // Navigation
+                this.elements.backButton.addEventListener('click', () => this.backToMain());
+                this.elements.mobileMenuBtn.addEventListener('click', () => this.toggleMobileMenu());
+                
+                // Music Controls
+                this.elements.playBtn.addEventListener('click', () => this.music.play());
+                this.elements.pauseBtn.addEventListener('click', () => this.music.pause());
+                this.elements.mobilePlayBtn.addEventListener('click', () => this.music.play());
+                this.elements.mobilePauseBtn.addEventListener('click', () => this.music.pause());
+                this.elements.volumeSlider.addEventListener('input', (e) => {
+                    this.music.setVolume(e.target.value);
+                    this.elements.mobileVolumeSlider.value = e.target.value;
+                });
+                this.elements.mobileVolumeSlider.addEventListener('input', (e) => {
+                    this.music.setVolume(e.target.value);
+                    this.elements.volumeSlider.value = e.target.value;
+                });
+                
+                // Close modals
+                [this.elements.passwordModal, this.elements.messageModal].forEach(modal => {
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) this.closeModal(modal.id);
+                    });
+                });
+                
+                // Touch gestures
+                this.setupTouchGestures();
+            }
+            
+            setupTouchGestures() {
+                let startY;
+                
+                // Swipe down to close modals on mobile
+                document.addEventListener('touchstart', (e) => {
+                    startY = e.touches[0].clientY;
+                }, { passive: true });
+                
+                document.addEventListener('touchend', (e) => {
+                    if (!startY) return;
+                    
+                    const endY = e.changedTouches[0].clientY;
+                    const diff = startY - endY;
+                    
+                    // Swipe down more than 100px to close modal
+                    if (diff < -100) {
+                        const activeModal = document.querySelector('.modal-overlay.active');
+                        if (activeModal) {
+                            this.closeModal(activeModal.id);
+                        }
+                    }
+                    
+                    startY = null;
+                }, { passive: true });
+            }
+            
+            setupMobile() {
+                // Check if mobile
+                this.isMobile = window.innerWidth < 768;
+                
+                // Handle orientation change
+                window.addEventListener('orientationchange', () => {
+                    setTimeout(() => {
+                        this.fallingAnimation.restart();
+                        this.isMobile = window.innerWidth < 768;
+                    }, 300);
+                });
+                
+                // Handle resize
+                window.addEventListener('resize', () => {
+                    this.isMobile = window.innerWidth < 768;
+                });
+            }
+            
+            toggleMobileMenu() {
+                // Simple menu toggle for mobile
+                const menuOpen = this.elements.mobileMenuBtn.classList.toggle('active');
+                
+                if (menuOpen) {
+                    this.elements.mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
+                    // Add mobile menu functionality here if needed
+                } else {
+                    this.elements.mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                }
+            }
+            
+            initAnimations() {
+                // Animate title
+                const title = document.querySelector('.main-title');
+                setTimeout(() => {
+                    title.style.transition = 'all 0.8s ease';
+                    title.style.transform = 'scale(1.05)';
+                    setTimeout(() => {
+                        title.style.transform = 'scale(1)';
+                    }, 300);
+                }, 500);
+                
+                // Animate crew cards with staggered delay
+                const cards = document.querySelectorAll('.crew-card');
+                cards.forEach((card, index) => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(30px)';
+                    
+                    setTimeout(() => {
+                        card.style.transition = 'all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, 700 + (index * 100));
+                });
+            }
+            
+            startMusic() {
+                setTimeout(() => {
+                    this.music.play();
+                }, 1000);
+            }
+            
+            // ============================
+            // PASSWORD SYSTEM
+            // ============================
+            openPasswordModal(card) {
+                this.currentCrew = card.getAttribute('data-crew');
+                
+                this.elements.crewNameSpan.textContent = this.currentCrew;
+                this.elements.passwordModal.classList.add('active');
+                this.elements.passwordInput.focus();
+                this.elements.errorMessage.textContent = '';
+                this.elements.passwordInput.value = '';
+                
+                // Prevent body scroll on mobile when modal is open
+                if (this.isMobile) {
+                    document.body.style.overflow = 'hidden';
+                }
+            }
+            
+            togglePasswordVisibility() {
+                const input = this.elements.passwordInput;
+                const button = this.elements.togglePassword;
+                
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    button.innerHTML = '<i class="fas fa-eye-slash"></i> Sembunyikan';
+                } else {
+                    input.type = 'password';
+                    button.innerHTML = '<i class="fas fa-eye"></i> Tampilkan';
+                }
+            }
+            
+            checkPassword() {
+                const enteredPassword = this.elements.passwordInput.value.trim();
+                const correctPassword = this.getCrewData(this.currentCrew)?.password;
+                
+                if (enteredPassword === correctPassword) {
+                    this.showMessagePage();
+                    this.closeModal('passwordModal');
+                    this.enableNabillaButton();
+                } else {
+                    this.elements.errorMessage.textContent = '❌ Password salah! Coba lagi.';
+                    this.elements.passwordInput.style.borderColor = 'var(--secondary)';
+                    
+                    // Shake animation for error
+                    this.elements.passwordInput.style.animation = 'shake 0.5s';
+                    setTimeout(() => {
+                        this.elements.passwordInput.style.animation = '';
+                        this.elements.passwordInput.style.borderColor = '';
+                    }, 500);
+                }
+            }
+            
+            // ============================
+            // MESSAGE SYSTEM
+            // ============================
+            enableNabillaButton() {
+                this.hasReadMessage = true;
+                const button = this.elements.sendToNabillaBtn;
+                
+                button.classList.remove('locked');
+                button.innerHTML = `
+                    <i class="fab fa-whatsapp"></i>
+                    Kirim Pesan ke Nabilla
+                    <span style="margin-left: 10px; font-size: 0.9rem; opacity: 0.8;">(Sekarang aktif!)</span>
+                `;
+                
+                // Add glow animation
+                button.style.animation = 'glow 2s infinite';
+                this.music.showNotification('💌 Sekarang kamu bisa kirim pesan ke Nabilla!');
+            }
+            
+            openMessageModal() {
+                if (!this.hasReadMessage) {
+                    this.music.showNotification('📖 Baca pesan perpisahan dulu ya!');
+                    return;
+                }
+                
+                this.elements.messageModal.classList.add('active');
+                this.elements.senderName.focus();
+                
+                if (this.isMobile) {
+                    document.body.style.overflow = 'hidden';
+                }
+            }
+            
+            sendMessage(event) {
+                event.preventDefault();
+                
+                const name = this.elements.senderName.value.trim();
+                const message = this.elements.senderMessage.value.trim();
+                
+                if (!name || !message) {
+                    this.music.showNotification('❌ Harap isi nama dan pesan terlebih dahulu!');
+                    return;
+                }
+                
+                // Format WhatsApp message
+                const whatsappMessage = encodeURIComponent(
+                    `Halo Nabilla! 👋\n\n` +
+                    `Ini pesan dari *${name}* (dari Farewell Moments):\n\n` +
+                    `${message}\n\n` +
+                    `---\n` +
+                    `*Farewell Moments*\n` +
+                    `Keep the memories alive! ❤️`
+                );
+                
+                // Ganti dengan nomor WhatsApp Nabilla yang asli
+                const phoneNumber = "6281234567890";
+                
+                // Open WhatsApp
+                window.open(`https://wa.me/${phoneNumber}?text=${whatsappMessage}`, '_blank');
+                
+                // Reset form and close modal
+                this.elements.senderName.value = '';
+                this.elements.senderMessage.value = '';
+                this.closeModal('messageModal');
+                
+                // Success notification
+                this.music.showNotification('✅ Pesan berhasil dikirim! WhatsApp akan terbuka.');
+            }
+            
+            // ============================
+            // PAGE NAVIGATION
+            // ============================
+            showMessagePage() {
+                this.elements.mainPage.style.display = 'none';
+                this.elements.messagePage.style.display = 'block';
+                
+                const crewData = this.getCrewData(this.currentCrew);
+                
+                // Set crew data
+                this.elements.crewAvatar.innerHTML = `<i class="fas fa-${crewData.icon}"></i>`;
+                this.elements.messageCrewName.textContent = this.currentCrew;
+                this.elements.messageRole.textContent = crewData.role;
+                this.elements.messageText.innerHTML = crewData.message;
+                this.elements.messageQuote.textContent = crewData.quote;
+                this.elements.messageSignature.innerHTML = crewData.signature;
+                
+                // Scroll to top smoothly
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+            
+            backToMain() {
+                this.elements.messagePage.style.display = 'none';
+                this.elements.mainPage.style.display = 'block';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+            
+            closeModal(modalId) {
+                document.getElementById(modalId).classList.remove('active');
+                
+                // Restore body scroll
+                document.body.style.overflow = '';
+                
+                // Clear form fields
+                if (modalId === 'passwordModal') {
+                    this.elements.passwordInput.value = '';
+                    this.elements.errorMessage.textContent = '';
+                }
+            }
+            
+            // ============================
+            // CREW DATA
+            // ============================
+            getCrewData(crewName) {
+                const data = {
+                    "Andi": {
+                        password: "kenangan123",
+                        icon: "crown",
+                        role: "Team Captain",
+                        message: `Hai teman-teman,<br><br>
+                        Rasanya baru kemarin kita memulai petualangan ini bersama. Sekarang, tiba saatnya kita berjalan di jalan yang berbeda. Setiap tawa, setiap perjuangan, dan setiap kemenangan bersama kalian akan selamanya terukir dalam hati.<br><br>
+                        Aku sangat bangga melihat bagaimana kita tumbuh bersama. Dari tim yang awalnya asing, menjadi keluarga yang saling mendukung. Terima kasih telah mempercayaiku memimpin kalian semua.<br><br>
+                        Ingat, perpisahan ini bukan akhir. Ini adalah babak baru dimana kita akan menulis cerita yang lebih hebat.`,
+                        quote: "Pemimpin sejati tidak menciptakan pengikut, tapi menciptakan pemimpin baru.",
+                        signature: "Sampai jumpa di puncak kesuksesan,<br><strong>Andi Wijaya</strong>"
+                    },
+                    "Budi": {
+                        password: "selaluCeria",
+                        icon: "sun",
+                        role: "Creative Mind",
+                        message: `Wahai kawan-kawan imajinatif!<br><br>
+                        Dunia tanpa kreativitas seperti langit tanpa bintang. Dan kalianlah bintang-bintang yang membuat perjalanan kita bersinar. Masih ingat saat kita brainstorming hingga larut malam? Ide-ide gila yang akhirnya menjadi kenyataan?<br><br>
+                        Terima kasih telah mengajariku bahwa batasan hanya ada di pikiran. Setiap diskusi, setiap kritik membangun, dan setiap apresiasi dari kalian membuatku menjadi lebih baik.<br><br>
+                        Teruslah bermimpi dalam warna-warna, teruslah menciptakan keajaiban. Dunia butuh lebih banyak keindahan dari orang-orang seperti kalian.`,
+                        quote: "Kreativitas adalah kecerdasan yang sedang bersenang-senang.",
+                        signature: "Tetap warna-warni,<br><strong>Budi Santoso</strong>"
+                    },
+                    "Citra": {
+                        password: "bahagia2023",
+                        icon: "star",
+                        role: "Design Artist",
+                        message: `Untuk keluarga kreatifku,<br><br>
+                        Hidup adalah kanvas, dan kita adalah senimannya. Bersama, kita telah melukis masterpiece yang tak ternilai. Setiap detail, setiap warna, setiap komposisi yang kita buat bersama telah mengajariku arti kesempurnaan dalam ketidaksempurnaan.<br><br>
+                        Aku akan merindukan saat-saat kita berdebat tentang warna, typography, spacing - hal-hal kecil yang membuat perbedaan besar. Passion kalian terhadap keindahan selalu menginspirasiku.<br><br>
+                        Teruslah melihat dunia dengan mata yang penuh keajaiban. Teruslah membuat yang biasa menjadi luar biasa.`,
+                        quote: "Desain bukan hanya bagaimana sesuatu terlihat, tapi bagaimana sesuatu bekerja.",
+                        signature: "Dengan cinta pada estetika,<br><strong>Citra Lestari</strong>"
+                    },
+                    "Doni": {
+                        password: "suksesSelalu",
+                        icon: "rocket",
+                        role: "Tech Genius",
+                        message: `Halo para problem solver!<br><br>
+                        Dari line code pertama hingga sistem yang kompleks, kita telah membangun sesuatu yang luar biasa. Setiap bug yang kita perbaiki, setiap algoritma yang kita optimasi, mengingatkanku bahwa tidak ada masalah yang tidak bisa dipecahkan bersama.<br><br>
+                        Aku akan merindukan diskusi teknis tengah malam, coffee break sambil debugging, dan euforia saat fitur berjalan mulus. Semangat pantang menyerah kalian adalah bahan bakar terbaik.<br><br>
+                        Teruslah belajar, teruslah berkembang. Teknologi tidak pernah berhenti, dan aku yakin kalian akan menjadi pionir di era digital ini.`,
+                        quote: "Kode terbaik ditulis dengan hati, bukan hanya dengan logika.",
+                        signature: "Tetap coding dengan passion,<br><strong>Doni Pratama</strong>"
+                    },
+                    "Eka": {
+                        password: "terimaKasih",
+                        icon: "heart",
+                        role: "Support Angel",
+                        message: `Sahabat-sahabatku yang luar biasa,<br><br>
+                        Jika ada satu pelajaran terbesar dari perjalanan kita, itu adalah kekuatan empati dan dukungan. Bagaimana kita saling menguatkan saat jatuh, saling mendengar saat butuh, dan saling menyemangati saat ragu.<br><br>
+                        Terima kasih telah menjadi pelipur lara saat aku lelah, menjadi pendengar setia saat aku bingung, dan menjadi cahaya saat hari-hari gelap. Crew ini bukan sekadar tim kerja, tapi keluarga yang saling menjaga.<br><br>
+                        Dimanapun kalian berada, tetaplah menjadi orang baik yang peduli. Dunia butuh lebih banyak kehangatan seperti yang kalian berikan.`,
+                        quote: "Dukungan terbaik adalah menjadi pelangi setelah badai orang lain.",
+                        signature: "Dengan kasih sayang tak terhingga,<br><strong>Eka Sari</strong>"
+                    }
+                };
+                
+                return data[crewName];
+            }
+        }
+
+        // ============================
+        // INITIALIZE APP
+        // ============================
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add shake animation CSS
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes shake {
+                    0%, 100% { transform: translateX(0); }
+                    25% { transform: translateX(-10px); }
+                    75% { transform: translateX(10px); }
+                }
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes fadeOut {
+                    from { opacity: 1; }
+                    to { opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // Initialize app
+            window.app = new FarewellApp();
+            
+            console.log('🎉 Farewell Moments App loaded successfully!');
+        });
+    </script>
+
+</body></html>

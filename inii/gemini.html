@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gesture Particle - Blue Edition</title>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #000000;
+    color: white;
+    overflow: hidden;
+    height: 100vh;
+}
+
+/* Header styling */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 16px 20px;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    background: linear-gradient(45deg, #3366ff, #00ccff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.nav-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.btn {
+    padding: 8px 16px;
+    background: rgba(51, 102, 255, 0.2);
+    border: 1px solid rgba(51, 102, 255, 0.4);
+    border-radius: 20px;
+    color: #88ccff;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    background: rgba(51, 102, 255, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 100, 255, 0.3);
+}
+
+/* Status display */
+#status {
+    position: fixed;
+    top: 80px;
+    left: 20px;
+    color: #88ccff;
+    font-size: 20px;
+    font-family: monospace;
+    background: rgba(0, 20, 40, 0.8);
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: 1px solid #3366ff;
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    text-shadow: 0 0 10px rgba(51, 102, 255, 0.5);
+}
+
+/* Instructions */
+.instructions {
+    position: fixed;
+    bottom: 140px;
+    left: 20px;
+    background: rgba(0, 20, 40, 0.8);
+    padding: 15px;
+    border-radius: 15px;
+    border: 1px solid rgba(51, 102, 255, 0.3);
+    backdrop-filter: blur(10px);
+    max-width: 300px;
+    z-index: 1000;
+}
+
+.instructions h3 {
+    color: #88ccff;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.instructions ul {
+    list-style: none;
+}
+
+.instructions li {
+    margin: 8px 0;
+    font-size: 14px;
+    color: rgba(200, 220, 255, 0.9);
+}
+
+.instructions .gesture {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background: rgba(51, 102, 255, 0.3);
+    border-radius: 50%;
+    text-align: center;
+    margin-right: 8px;
+    line-height: 24px;
+}
+
+/* Video feed styling - ZOOMED OUT & WIDER */
+#cam {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    width: 350px; /* Diperbesar dari 180px */
+    height: 260px; /* Diperbesar dari 240px */
+    border-radius: 16px;
+    border: 2px solid #3366ff;
+    transform: scaleX(-1);
+    box-shadow: 0 10px 30px rgba(51, 102, 255, 0.4);
+    object-fit: cover;
+    z-index: 1000;
+}
+
+/* Camera controls */
+.camera-controls {
+    position: fixed;
+    bottom: 290px;
+    right: 20px;
+    background: rgba(0, 20, 40, 0.8);
+    padding: 10px 15px;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(51, 102, 255, 0.3);
+    z-index: 1000;
+    display: flex;
+    gap: 10px;
+}
+
+.zoom-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.zoom-btn {
+    width: 30px;
+    height: 30px;
+    background: rgba(51, 102, 255, 0.3);
+    border: 1px solid rgba(51, 102, 255, 0.5);
+    border-radius: 50%;
+    color: #88ccff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    transition: all 0.2s;
+}
+
+.zoom-btn:hover {
+    background: rgba(51, 102, 255, 0.5);
+    transform: scale(1.1);
+}
+
+/* Effect overlay */
+.effect-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 900;
+}
+
+/* Heart particles container */
+.heart-particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 800;
+}
+
+.heart-particle {
+    position: absolute;
+    color: #3366ff;
+    font-size: 24px;
+    opacity: 0;
+    animation: floatUp 3s ease-in-out forwards;
+    text-shadow: 0 0 10px rgba(51, 102, 255, 0.7);
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(0) scale(0.5);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-150px) scale(1);
+        opacity: 0;
+    }
+}
+
+/* Celebration message */
+.celebration {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 48px;
+    font-weight: bold;
+    color: #3366ff;
+    text-align: center;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1100;
+    text-shadow: 0 0 30px rgba(51, 102, 255, 0.9);
+}
+
+/* Love message */
+.love-message {
+    position: fixed;
+    bottom: 200px;
+    right: 20px;
+    background: linear-gradient(135deg, #3366ff, #00aaff);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 25px;
+    font-size: 18px;
+    font-weight: bold;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s ease;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 30px rgba(51, 102, 255, 0.4);
+}
+
+.love-message.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Mode indicators */
+.mode-indicator {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+    z-index: 1000;
+}
+
+.mode-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(51, 102, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.mode-dot.active {
+    background: #88ccff;
+    box-shadow: 0 0 15px #3366ff;
+    transform: scale(1.2);
+}
+
+/* Loading screen */
+.loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 3px solid transparent;
+    border-top-color: #3366ff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+    margin-top: 20px;
+    color: #88ccff;
+    font-size: 18px;
+}
+
+/* Particle counter */
+.particle-counter {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(0, 20, 40, 0.7);
+    padding: 8px 15px;
+    border-radius: 10px;
+    font-size: 14px;
+    color: #88ccff;
+    font-family: monospace;
+    border: 1px solid rgba(51, 102, 255, 0.3);
+}
+
+/* Detection area */
+.detection-area {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 350px;
+    height: 260px;
+    border: 2px dashed rgba(51, 102, 255, 0.5);
+    border-radius: 16px;
+    pointer-events: none;
+    z-index: 999;
+}
+</style>
+</head>
+<body>
+<!-- Loading screen -->
+<div class="loading" id="loading">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Loading Blue Particles...</div>
+</div>
+
+<!-- Header -->
+<div class="header">
+    <div class="logo">💙 Blue Gesture Magic</div>
+    <div class="nav-buttons">
+        <button class="btn" onclick="resetParticles()">Reset</button>
+        <button class="btn" onclick="toggleCamera()">Toggle Camera</button>
+        <button class="btn" onclick="toggleAutoRotate()">Auto Rotate</button>
+    </div>
+</div>
+
+<!-- Status display -->
+<div id="status">🔍 Searching for your hand...</div>
+
+<!-- Mode indicators -->
+<div class="mode-indicator">
+    <div class="mode-dot" data-mode="normal"></div>
+    <div class="mode-dot" data-mode="saturn"></div>
+    <div class="mode-dot" data-mode="heart"></div>
+    <div class="mode-dot" data-mode="iloveu"></div>
+</div>
+
+<!-- Particle counter -->
+<div class="particle-counter" id="particleCounter">Particles: 22,000</div>
+
+<!-- Instructions -->
+<div class="instructions">
+    <h3>Gesture Controls:</h3>
+    <ul>
+        <li><span class="gesture">✊</span> Fist = Saturn Rings</li>
+        <li><span class="gesture">🫰</span> Pinch + Middle Up = Heart Shape</li>
+        <li><span class="gesture">✌️</span> Peace Sign = "I LOVE U"</li>
+        <li><span class="gesture">👐</span> Open Hand = Normal Mode</li>
+    </ul>
+</div>
+
+<!-- Camera controls -->
+<div class="camera-controls">
+    <div class="zoom-control">
+        <button class="zoom-btn" onclick="zoomOut()">−</button>
+        <span style="color:#88ccff; font-size:12px;">Zoom</span>
+        <button class="zoom-btn" onclick="zoomIn()">+</button>
+    </div>
+</div>
+
+<!-- Detection area -->
+<div class="detection-area"></div>
+
+<!-- Celebration message -->
+<div class="celebration" id="celebration">BLUE MAGIC! 💙</div>
+
+<!-- Love message -->
+<div class="love-message" id="loveMessage">For My Special Someone 💙</div>
+
+<!-- Video feed - NOW WIDER -->
+<video id="cam" autoplay playsinline></video>
+
+<!-- Effect overlay -->
+<div class="effect-overlay" id="effectOverlay"></div>
+
+<!-- Heart particles -->
+<div class="heart-particles" id="heartParticles"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+    <script src="https://threejs.org/examples/js/loaders/FontLoader.js"></script>
+    <script src="https://threejs.org/examples/js/geometries/TextGeometry.js"></script>
+
+<script>
+    // let iloveuPoints = null;
+    // let iloveuLoaded = false;
+
+// Hide loading screen after 2 seconds
+setTimeout(() => {
+    document.getElementById('loading').style.opacity = '0';
+    setTimeout(() => {
+        document.getElementById('loading').style.display = 'none';
+    }, 500);
+}, 2000);
+
+/* ================= CONFIGURATION ================= */
+const PARTICLE_COUNT = 8000;
+let currentMode = "normal";
+let targetMode = "normal";
+let handFollow = new THREE.Vector2();
+let depth = 0;
+let lastGestureChange = Date.now();
+let heartCooldown = 0;
+let autoRotate = true;
+let currentZoom = 1.0;
+const MIN_ZOOM = 0.7;
+const MAX_ZOOM = 2.0;
+
+/* ================= THREE.JS SETUP ================= */
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0x000011, 60, 200);
+
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.z = 100;
+
+const renderer = new THREE.WebGLRenderer({ 
+    antialias: true,
+    alpha: true,
+    powerPreference: "high-performance"
+});
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setClearColor(0x000000, 0);
+document.body.appendChild(renderer.domElement);
+
+/* ================= PARTICLES ================= */
+const geometry = new THREE.BufferGeometry();
+const positions = new Float32Array(PARTICLE_COUNT * 3);
+const targets = new Float32Array(PARTICLE_COUNT * 3);
+const colors = new Float32Array(PARTICLE_COUNT * 3);
+
+// BLUE THEME: Initialize particles with blue colors
+for (let i = 0; i < PARTICLE_COUNT; i++) {
+    const i3 = i * 3;
+
+    // Random starting positions in 3D space
+    positions[i3] = (Math.random() - 0.5) * 160;
+    positions[i3 + 1] = (Math.random() - 0.5) * 160;
+    positions[i3 + 2] = (Math.random() - 0.5) * 160;
+
+    // BLUE COLOR SCHEME
+    const blueShade = Math.random();
+    if (blueShade < 0.33) {
+        // Light blue
+        colors[i3] = 0.4;      // R
+        colors[i3 + 1] = 0.7;  // G
+        colors[i3 + 2] = 1.0;  // B
+    } else if (blueShade < 0.66) {
+        // Medium blue
+        colors[i3] = 0.2;      // R
+        colors[i3 + 1] = 0.5;  // G
+        colors[i3 + 2] = 0.9;  // B
+    } else {
+        // Deep blue
+        colors[i3] = 0.1;      // R
+        colors[i3 + 1] = 0.3;  // G
+        colors[i3 + 2] = 0.8;  // B
+    }
+
+    // Copy to targets
+    targets[i3] = positions[i3];
+    targets[i3 + 1] = positions[i3 + 1];
+    targets[i3 + 2] = positions[i3 + 2];
+}
+
+geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+const material = new THREE.PointsMaterial({
+    size: 0.5,
+    vertexColors: true,
+    transparent: true,
+    opacity: 0.95,
+    blending: THREE.AdditiveBlending,
+    sizeAttenuation: true
+});
+
+const particles = new THREE.Points(geometry, material);
+scene.add(particles);
+
+/* ================= LIGHTS ================= */
+const ambientLight = new THREE.AmbientLight(0x3366ff, 0.2);
+scene.add(ambientLight);
+
+const pointLight = new THREE.PointLight(0x88ccff, 0.7, 150);
+pointLight.position.set(0, 0, 60);
+scene.add(pointLight);
+
+const directionalLight = new THREE.DirectionalLight(0x4488ff, 0.5);
+directionalLight.position.set(1, 1, 1);
+scene.add(directionalLight);
+
+/* ================= PATTERN FUNCTIONS - FIXED 3D ================= */
+function setPattern(type) {
+    if (type === currentMode && Date.now() - lastGestureChange < 300) return;
+
+    currentMode = type;
+    lastGestureChange = Date.now();
+
+    // Update mode indicator
+    document.querySelectorAll('.mode-dot').forEach(dot => {
+        dot.classList.remove('active');
+        if (dot.dataset.mode === type) {
+            dot.classList.add('active');
+        }
+    });
+
+    // Update status with emoji
+    const statusMap = {
+        "saturn": "🪐 SATURN RINGS (3D)",
+        "heart": "💙 HEART SHAPE (3D)",
+        "iloveu": "✌️ I LOVE YOU (3D)",
+        "normal": "✨ NORMAL PARTICLE MODE"
+    };
+
+    document.getElementById('status').textContent = statusMap[type] || "✨ NORMAL MODE";
+
+    // Create celebration effect for heart mode
+    if (type === "heart" && heartCooldown <= 0) {
+        createBlueParticles();
+        showCelebration("BLUE HEART! 💙");
+        heartCooldown = 60;
+    }
+
+    // Show love message for I LOVE YOU mode
+    if (type === "iloveu") {
+        showLoveMessage();
+    }
+
+    // Generate pattern positions with proper 3D coordinates
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+        const i3 = i * 3;
+
+        if (type === "saturn") {
+            // FIXED: Create proper 3D Saturn with rings
+            if (i < PARTICLE_COUNT * 0.3) {
+                // Saturn core - sphere in 3D
+                const phi = Math.random() * Math.PI * 2;
+                const theta = Math.random() * Math.PI;
+                const radius = 10 + Math.random() * 4;
+
+                targets[i3] = radius * Math.sin(theta) * Math.cos(phi);
+                targets[i3 + 1] = radius * Math.sin(theta) * Math.sin(phi);
+                targets[i3 + 2] = radius * Math.cos(theta);
+
+                // Yellow-white color for core
+                colors[i3] = 0.9;
+                colors[i3 + 1] = 0.9;
+                colors[i3 + 2] = 0.6;
+            } else {
+                // Saturn rings - in 3D space
+                const ringAngle = Math.random() * Math.PI * 2;
+                const ringRadius = 25 + Math.random() * 15;
+                const ringThickness = (Math.random() - 0.5) * 3;
+
+                // Create rings in XZ plane with slight Y variation
+                targets[i3] = Math.cos(ringAngle) * ringRadius;
+                targets[i3 + 1] = ringThickness; // Minor thickness in Y
+                targets[i3 + 2] = Math.sin(ringAngle) * ringRadius;
+
+                // Icy blue color for rings
+                colors[i3] = 0.6;
+                colors[i3 + 1] = 0.8;
+                colors[i3 + 2] = 1.0;
+            }
+        }
+
+        else if (type === "heart") {
+            // 3D Heart shape
+            const u = Math.random() * Math.PI * 2;
+            const v = Math.random() * Math.PI;
+            const scale = 20;
+
+            // Parametric heart equation in 3D
+            const x = scale * Math.pow(Math.sin(u), 3);
+            const y = scale * (13 * Math.cos(u) - 5 * Math.cos(2*u) - 2 * Math.cos(3*u) - Math.cos(4*u)) / 13;
+            const z = scale * Math.sin(v) * 0.5; // Add depth
+
+            targets[i3] = x;
+            targets[i3 + 1] = y;
+            targets[i3 + 2] = z;
+
+            // Blue-pink color for heart
+            colors[i3] = 0.5;
+            colors[i3 + 1] = 0.3;
+            colors[i3 + 2] = 0.8;
+        }
+
+            else if (type === "iloveu") {
+
+                // stop rotation BIKIN TENANG
+                autoRotate = false;
+                particles.rotation.set(0, 0, 0);
+
+                const depth = (Math.random() - 0.5) * 2;
+                const jitter = () => (Math.random() - 0.5) * 1.2;
+
+                // === PATH TITIK HURUF (handwritten) ===
+                const textPath = [
+                    // i
+                    [-45, -10], [-45, 0], [-45, 10], [-45, 20],
+                    [-45, 30], [-45, 40],
+                    [-45, 55],
+
+                    // l
+                    [-30, -10], [-30, 0], [-30, 10], [-30, 20],
+                    [-30, 30], [-30, 40], [-30, 50],
+
+                    // o
+                    [-10, 10], [-5, 20], [0, 30], [5, 20], [0, 10], [-5, 15],
+
+                    // v
+                    [10, 30], [14, 20], [18, 10], [22, 20], [26, 30],
+
+                    // e
+                    [30, 20], [35, 20], [40, 20],
+                    [30, 30], [35, 35], [40, 30],
+                    [30, 20],
+
+                    // u
+                    [50, 30], [50, 20], [52, 10],
+                    [56, 10], [60, 20], [60, 30],
+                ];
+
+                const p = textPath[i % textPath.length];
+
+                targets[i3]     = p[0] + jitter();
+                targets[i3 + 1] = p[1] + jitter();
+                targets[i3 + 2] = depth;
+
+                colors[i3]     = 0.5;
+                colors[i3 + 1] = 0.8;
+                colors[i3 + 2] = 1.0;
+            }
+
+        else {
+            // Normal mode - random distribution in 3D space
+            targets[i3] = (Math.random() - 0.5) * 160;
+            targets[i3 + 1] = (Math.random() - 0.5) * 160;
+            targets[i3 + 2] = (Math.random() - 0.5) * 160;
+
+            // Reset to blue colors
+            const blueShade = Math.random();
+            if (blueShade < 0.33) {
+                colors[i3] = 0.4;
+                colors[i3 + 1] = 0.7;
+                colors[i3 + 2] = 1.0;
+            } else if (blueShade < 0.66) {
+                colors[i3] = 0.2;
+                colors[i3 + 1] = 0.5;
+                colors[i3 + 2] = 0.9;
+            } else {
+                colors[i3] = 0.1;
+                colors[i3 + 1] = 0.3;
+                colors[i3 + 2] = 0.8;
+            }
+        }
+    }
+
+    geometry.attributes.color.needsUpdate = true;
+}
+
+/* ================= UI EFFECTS ================= */
+function createBlueParticles() {
+    const container = document.getElementById('heartParticles');
+    for (let i = 0; i < 25; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'heart-particle';
+        particle.innerHTML = '💙';
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.fontSize = `${20 + Math.random() * 30}px`;
+        particle.style.animationDelay = `${Math.random() * 0.5}s`;
+        container.appendChild(particle);
+
+        setTimeout(() => particle.remove(), 3000);
+    }
+}
+
+function showCelebration(text) {
+    const celebration = document.getElementById('celebration');
+    celebration.textContent = text;
+    celebration.style.opacity = '1';
+    celebration.style.transform = 'translate(-50%, -50%) scale(1)';
+
+    setTimeout(() => {
+        celebration.style.opacity = '0';
+        celebration.style.transform = 'translate(-50%, -50%) scale(0.5)';
+    }, 1500);
+}
+
+function showLoveMessage() {
+    const message = document.getElementById('loveMessage');
+    const messages = [
+        "For My Special Someone 💙",
+        "Blue Magic Love ✨",
+        "Made with Blue Energy 💫",
+        "You're My Everything 💎",
+        "Ocean of Love 🌊"
+    ];
+
+    message.textContent = messages[Math.floor(Math.random() * messages.length)];
+    message.classList.add('show');
+
+    setTimeout(() => {
+        message.classList.remove('show');
+    }, 3000);
+}
+
+/* ================= HAND TRACKING ================= */
+const video = document.getElementById('cam');
+const statusDiv = document.getElementById('status');
+
+const hands = new Hands({
+    locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+});
+
+// Config untuk deteksi yang lebih luas
+hands.setOptions({
+    maxNumHands: 2, // Bisa deteksi 2 tangan
+    modelComplexity: 1,
+    minDetectionConfidence: 0.5, // Threshold lebih rendah untuk deteksi lebih luas
+    minTrackingConfidence: 0.5,
+    selfieMode: true
+});
+
+hands.onResults((results) => {
+    if (!results.multiHandLandmarks || !results.multiHandLandmarks.length) {
+        statusDiv.textContent = "👋 Show your hand to camera";
+        targetMode = "normal";
+        return;
+    }
+
+    const landmarks = results.multiHandLandmarks[0];
+
+    // Gunakan landmark 9 (palm center) dengan scaling untuk zoom
+    const scaledX = (landmarks[9].x - 0.5) * -200 * currentZoom;
+    const scaledY = (landmarks[9].y - 0.5) * -150 * currentZoom;
+
+    handFollow.x = scaledX;
+    handFollow.y = scaledY;
+    depth = landmarks[9].z;
+
+    // Calculate finger distances for gestures
+    const thumbIndexDist = Math.hypot(
+        landmarks[4].x - landmarks[8].x,
+        landmarks[4].y - landmarks[8].y
+    );
+
+    // Check which fingers are extended
+    const indexUp = landmarks[8].y < landmarks[6].y;
+    const middleUp = landmarks[12].y < landmarks[10].y;
+    const ringUp = landmarks[16].y < landmarks[14].y;
+    const pinkyUp = landmarks[20].y < landmarks[18].y;
+
+    // Gesture recognition dengan threshold yang lebih longgar
+    if (!indexUp && !middleUp && !ringUp && !pinkyUp) {
+        // Closed fist
+        targetMode = "saturn";
+        statusDiv.textContent = "✊ FIST - SATURN RINGS";
+    } else if (thumbIndexDist < 0.05 && middleUp && !indexUp && !ringUp) {
+        // Pinch with middle finger up
+        targetMode = "heart";
+        statusDiv.textContent = "🫰 PINCH - HEART SHAPE";
+    } else if (indexUp && middleUp && !ringUp && !pinkyUp) {
+        // Peace sign
+        targetMode = "iloveu";
+        statusDiv.textContent = "✌️ PEACE SIGN - I LOVE YOU";
+    } else {
+        // Default to normal
+        targetMode = "normal";
+        statusDiv.textContent = "👋 OPEN HAND - NORMAL MODE";
+    }
+});
+
+/* ================= CAMERA SETUP - WIDER ================= */
+const cameraUtils = new Camera(video, {
+    onFrame: async () => {
+        await hands.send({ image: video });
+    },
+    width: 1280, // Lebar ditingkatkan
+    height: 720, // Tinggi ditingkatkan
+    facingMode: "user"
+});
+
+// Start camera dengan resolusi lebih tinggi
+navigator.mediaDevices.getUserMedia({
+    video: {
+        width: { ideal: 1280 },
+        height: { ideal: 720 },
+        facingMode: "user",
+        frameRate: { ideal: 30 }
+    }
+}).then(stream => {
+    video.srcObject = stream;
+    cameraUtils.start();
+}).catch(err => {
+    console.error("Camera error:", err);
+    statusDiv.textContent = "❌ Camera access denied";
+    // Fallback ke default
+    cameraUtils.start();
+});
+
+/* ================= ZOOM FUNCTIONS ================= */
+function zoomIn() {
+    if (currentZoom < MAX_ZOOM) {
+        currentZoom += 0.1;
+        updateCameraZoom();
+        showCelebration(`ZOOM IN ${Math.round(currentZoom * 100)}% 🔍`);
+    }
+}
+
+function zoomOut() {
+    if (currentZoom > MIN_ZOOM) {
+        currentZoom -= 0.1;
+        updateCameraZoom();
+        showCelebration(`ZOOM OUT ${Math.round(currentZoom * 100)}% 🔍`);
+    }
+}
+
+function updateCameraZoom() {
+    // Adjust video element size based on zoom
+    const cam = document.getElementById('cam');
+    const detectionArea = document.querySelector('.detection-area');
+
+    cam.style.width = `${350 * currentZoom}px`;
+    cam.style.height = `${260 * currentZoom}px`;
+
+    detectionArea.style.width = `${350 * currentZoom}px`;
+    detectionArea.style.height = `${260 * currentZoom}px`;
+
+    // Update position to keep bottom-right aligned
+    cam.style.right = "20px";
+    cam.style.bottom = "20px";
+
+    detectionArea.style.right = "20px";
+    detectionArea.style.bottom = "20px";
+}
+
+/* ================= UTILITY FUNCTIONS ================= */
+function resetParticles() {
+    setPattern("normal");
+    showCelebration("RESET! 🔄");
+}
+
+function toggleCamera() {
+    const cam = document.getElementById('cam');
+    if (cam.style.display === 'none') {
+        cam.style.display = 'block';
+        cameraUtils.start();
+    } else {
+        cam.style.display = 'none';
+        cameraUtils.stop();
+    }
+}
+
+function toggleAutoRotate() {
+    autoRotate = !autoRotate;
+    showCelebration(autoRotate ? "AUTO ROTATE ON 🔄" : "AUTO ROTATE OFF ⏸️");
+}
+
+/* ================= ANIMATION LOOP ================= */
+let frameCount = 0;
+
+function animate() {
+    requestAnimationFrame(animate);
+    frameCount++;
+
+    // Update pattern if changed
+    if (targetMode !== currentMode) {
+        setPattern(targetMode);
+    }
+
+    // Update heart cooldown
+    if (heartCooldown > 0) heartCooldown--;
+
+    // Animate particles towards targets with hand influence
+    for (let i = 0; i < PARTICLE_COUNT * 3; i += 3) {
+        let targetX = targets[i];
+        let targetY = targets[i + 1];
+        let targetZ = targets[i + 2];
+
+        // Add hand influence
+        targetX += handFollow.x * 0.4;
+        targetY += handFollow.y * 0.4;
+        // Z-axis also affected
+        targetZ += depth * 30;
+
+        // Smooth interpolation
+        const speed = 0.08;
+        positions[i] += (targetX - positions[i]) * speed;
+        positions[i + 1] += (targetY - positions[i + 1]) * speed;
+        positions[i + 2] += (targetZ - positions[i + 2]) * speed;
+    }
+
+    geometry.attributes.position.needsUpdate = true;
+
+    // Auto rotation if enabled
+    if (autoRotate) {
+        particles.rotation.y += 0.002;
+        particles.rotation.x += 0.001;
+    }
+
+    // Pulse effect for particles
+    material.size = 0.5 + Math.sin(frameCount * 0.05) * 0.1;
+
+    renderer.render(scene, camera);
+}
+
+/* ================= EVENT LISTENERS ================= */
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// Start with a demo
+setTimeout(() => {
+    setPattern("heart");
+    setTimeout(() => setPattern("saturn"), 2500);
+    setTimeout(() => setPattern("iloveu"), 5000);
+    setTimeout(() => setPattern("normal"), 7500);
+}, 3000);
+
+// Start animation
+animate();
+
+// Initial pattern
+setPattern("normal");
+
+// Update particle counter
+setInterval(() => {
+    const counter = document.getElementById('particleCounter');
+    counter.textContent = `Particles: ${PARTICLE_COUNT.toLocaleString()}`;
+}, 1000);
+</script>
+</body>
+</html>
