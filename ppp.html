@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Hand Particle FINAL</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+
+<style>
+html, body {
+  margin: 0;
+  overflow: hidden;
+  background: black;
+}
+video { display: none; }
+canvas { position: fixed; inset: 0; }
+</style>
+</head>
+
+<body>
+<video id="video" autoplay playsinline></video>
+<canvas id="canvas"></canvas>
+
+<script>
+/* ================= SETUP ================= */
+const video = document.getElementById("video");
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+function resize(){
+  canvas.width = innerWidth;
+  canvas.height = innerHeight;
+}
+resize();
+addEventListener("resize", resize);
+
+/* ================= CAMERA PREVIEW ================= */
+const camW = 220, camH = 160, camPad = 20;
+
+/* ================= PARTICLES ================= */
+const COUNT = 700;
+const particles = [];
+let time = 0;
+
+for(let i=0;i<COUNT;i++){
+  const a = Math.random()*Math.PI*2;
+  const r = Math.random()*60;
+  particles.push({
+    x: canvas.width/2,
+    y: canvas.height/2,
+    ox: Math.cos(a)*r,
+    oy: Math.sin(a)*r,
+    angle: a,
+    speed: Math.random()*0.01+0.002,
+    size: Math.random()*2+1
+  });
+}
+
+function lerp(a,b,t){ return a+(b-a)*t }
+
+/* ================= HAND DATA ================= */
+let handX = canvas.width/2;
+let handY = canvas.height/2;
+let spread = 1;
+
+/* ================= MEDIAPIPE ================= */
+const hands = new Hands({
+  locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${f}`
+});
+
+hands.setOptions({
+  maxNumHands: 1,
+  modelComplexity: 1,
+  minDetectionConfidence: 0.7,
+  minTrackingConfidence: 0.7
+});
+
+hands.onResults(results=>{
+  ctx.drawImage(
+    results.image,
+    canvas.width - camW - camPad,
+    canvas.height - camH - camPad,
+    camW, camH
+  );
+
+  if(results.multiHandLandmarks.length){
+    const h = results.multiHandLandmarks[0];
+    const palm = h[9];
+    const thumb = h[4];
+    const index = h[8];
+
+    handX = palm.x * canvas.width;
+    handY = palm.y * canvas.height;
+
+    const dx = thumb.x - index.x;
+    const dy = thumb.y - index.y;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+
+    spread = dist > 0.07 ? 1 : 0;
+  }
+});
+
+/* ================= CAMERA ================= */
+const camera = new Camera(video,{
+  onFrame: async ()=>hands.send({image:video}),
+  width:640, height:480
+});
+camera.start();
+
+/* ================= ANIMATE ================= */
+function animate(){
+  requestAnimationFrame(animate);
+  time += 0.01;
+
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  particles.forEach(p=>{
+    // rotasi organik
+    p.angle += p.speed;
+    const wave = Math.sin(time + p.angle) * 10;
+
+    const tx = handX + Math.cos(p.angle)*(60 + wave)*spread;
+    const ty = handY + Math.sin(p.angle)*(60 + wave)*spread;
+
+    p.x = lerp(p.x, tx, 0.08);
+    p.y = lerp(p.y, ty, 0.08);
+
+    ctx.beginPath();
+    ctx.fillStyle = spread ? "#00ffff" : "#ff4fd8";
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+    ctx.fill();
+  });
+}
+
+animate();
+</script>
+</body>
+</html>

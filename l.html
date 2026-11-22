@@ -1,0 +1,2044 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Memories - Farewell Slideshow</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;family=Dancing+Script:wght@700&amp;family=Playfair+Display:wght@400;700&amp;display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #8A2BE2;
+            --secondary: #FF6B8B;
+            --accent: #00CED1;
+            --gold: #FFD700;
+            --dark: #0A0A1E;
+            --darker: #050510;
+            --light: #F8F9FF;
+            --gray: #A0A0C0;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {    
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            color: var(--light);
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            position: relative;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(138, 43, 226, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(255, 107, 139, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(0, 206, 209, 0.1) 0%, transparent 50%);
+            z-index: -2;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--darker);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 1s ease, visibility 1s ease;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader {
+            width: 80px;
+            height: 80px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--accent);
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        .loading-text {
+            font-size: 1.2rem;
+            color: var(--accent);
+            font-family: 'Dancing Script', cursive;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Slideshow Page */
+        .slideshow-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+            position: relative;
+            opacity: 0;
+            animation: fadeIn 1s forwards 0.5s;
+            width: 100%;
+        }
+
+        .slideshow-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            background: linear-gradient(45deg, var(--primary), var(--accent), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            line-height: 1.2;
+            width: 100%;
+            padding: 0 1rem;
+        }
+
+        .slideshow-subtitle {
+            font-size: clamp(1rem, 4vw, 1.3rem);
+            color: var(--gray);
+            text-align: center;
+            max-width: min(800px, 90vw);
+            margin: 0 auto 3rem;
+            line-height: 1.6;
+            padding: 0 1rem;
+        }
+
+        .slideshow-container {
+            width: 100%;
+            max-width: min(2000px, 95vw);
+            height: clamp(400px, 50vh, 500px);
+            position: relative;
+            margin: 0 auto;
+            overflow: hidden;
+            border-radius: 1.5rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--glass-border);
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: clamp(1rem, 3vw, 2.5rem);
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .slide.fading-out {
+            opacity: 0;
+            transform: scale(1.1);
+        }
+
+        .photo-frame {
+            width: clamp(150px, 30vw, 300px);
+            height: clamp(150px, 30vw, 300px);
+            border-radius: 1.25rem;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            border: 5px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            margin-bottom: clamp(1rem, 3vw, 2rem);
+            transition: transform 0.5s ease;
+        }
+
+        .slide.active .photo-frame {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .photo-frame::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--primary), var(--accent), var(--secondary));
+            border-radius: 1.35rem;
+            z-index: -1;
+            opacity: 0.5;
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+            display: block;
+        }
+
+        .slide.active .photo-frame:hover img {
+            transform: scale(1.05);
+        }
+
+        .photo-info {
+            text-align: center;
+            max-width: min(500px, 90vw);
+            padding: 0 1rem;
+        }
+
+        .photo-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.5rem, 5vw, 2.2rem);
+            color: var(--light);
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .photo-date {
+            color: var(--accent);
+            font-size: clamp(0.9rem, 3vw, 1rem);
+            margin-bottom: 1rem;
+            font-style: italic;
+        }
+
+        .photo-description {
+            color: var(--gray);
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
+            line-height: 1.6;
+        }
+
+        .slide-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 2rem;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: min(800px, 95vw);
+        }
+
+        .slide-btn {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            color: var(--light);
+            width: clamp(45px, 10vw, 50px);
+            height: clamp(45px, 10vw, 50px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: clamp(1rem, 4vw, 1.2rem);
+            flex-shrink: 0;
+            touch-action: manipulation;
+        }
+
+        .slide-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.1);
+        }
+
+        .slide-indicators {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .indicator {
+            width: clamp(10px, 3vw, 12px);
+            height: clamp(10px, 3vw, 12px);
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .indicator.active {
+            background: var(--accent);
+            transform: scale(1.2);
+        }
+
+        .progress-bar {
+            width: clamp(100px, 30vw, 200px);
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 0 1rem;
+            flex-shrink: 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            width: 0%;
+            transition: width 0.3s linear;
+        }
+
+        .next-page-btn {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: clamp(1rem, 4vw, 1.125rem) clamp(2rem, 8vw, 2.8125rem);
+            font-size: clamp(1rem, 4vw, 1.2rem);
+            border-radius: 50px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 3rem;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            box-shadow: 0 15px 35px rgba(138, 43, 226, 0.3);
+            position: relative;
+            overflow: hidden;
+            touch-action: manipulation;
+            min-height: 56px;
+        }
+
+        .next-page-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .next-page-btn:hover::before {
+            left: 100%;
+        }
+
+        .next-page-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(138, 43, 226, 0.4);
+        }
+
+        /* Main Page Styles */
+        .main-page {
+            min-height: 100vh;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+            opacity: 0;
+            width: 100%;
+        }
+
+        .main-page.active {
+            display: flex;
+            animation: fadeIn 1s forwards;
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: min(1400px, 95vw);
+            margin: 0 auto;
+            padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1rem, 3vw, 1.25rem);
+            position: relative;
+            z-index: 1;
+            width: 100%;
+        }
+
+        /* Header */
+        .main-header {
+            text-align: center;
+            margin-bottom: clamp(2rem, 6vw, 3.75rem);
+            position: relative;
+            width: 100%;
+        }
+
+        .title-container {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .main-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(2.5rem, 10vw, 5rem);
+            background: linear-gradient(45deg, var(--primary), var(--accent), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: clamp(0.75rem, 2vw, 0.9375rem);
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            line-height: 1.2;
+            word-wrap: break-word;
+            padding: 0 1rem;
+        }
+
+        .title-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(2.6rem, 10.5vw, 5.2rem);
+            opacity: 0.3;
+            filter: blur(10px);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .subtitle {
+            font-size: clamp(1rem, 4vw, 1.4rem);
+            color: var(--gray);
+            max-width: min(800px, 90vw);
+            margin: 0 auto clamp(1rem, 3vw, 1.5625rem);
+            line-height: 1.6;
+            font-weight: 300;
+            padding: 0 1rem;
+        }
+
+        .quote {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            color: var(--accent);
+            font-size: clamp(1rem, 4vw, 1.2rem);
+            padding: clamp(1rem, 3vw, 1.25rem) clamp(1.5rem, 5vw, 2.5rem);
+            border-left: 3px solid var(--accent);
+            background: linear-gradient(90deg, rgba(0, 206, 209, 0.1), transparent);
+            border-radius: 0 1.25rem 1.25rem 0;
+            display: inline-block;
+            margin-top: clamp(1rem, 3vw, 1.25rem);
+            max-width: 90%;
+            line-height: 1.6;
+        }
+
+        /* Crew Section */
+        .crew-section {
+            margin: clamp(2rem, 6vw, 3.75rem) 0;
+            width: 100%;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: clamp(1.8rem, 6vw, 2.5rem);
+            margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+            color: var(--light);
+            font-family: 'Playfair Display', serif;
+            line-height: 1.3;
+            padding: 0 1rem;
+        }
+
+        .section-title span {
+            color: var(--accent);
+        }
+
+        .crew-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
+            gap: clamp(1rem, 3vw, 1.875rem);
+            margin-bottom: clamp(2rem, 6vw, 3.75rem);
+            width: 100%;
+        }
+
+        .crew-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border-radius: 1.5625rem;
+            padding: clamp(1rem, 3vw, 1.5625rem);
+            border: 1px solid var(--glass-border);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+            min-height: min(280px, 70vw);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            touch-action: manipulation;
+        }
+
+        .crew-card:active {
+            transform: scale(0.98);
+        }
+
+        .crew-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(138, 43, 226, 0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+
+        .crew-card:hover::before {
+            transform: translateX(100%);
+        }
+
+        .crew-card:hover {
+            transform: translateY(-15px) scale(1.03);
+            border-color: var(--primary);
+            box-shadow: 0 25px 50px rgba(138, 43, 226, 0.3);
+        }
+
+        .card-glow {
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--primary), var(--accent), var(--secondary));
+            border-radius: 1.6875rem;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .crew-card:hover .card-glow {
+            opacity: 0.3;
+        }
+
+        .crew-avatar {
+            width: clamp(70px, 20vw, 90px);
+            height: clamp(70px, 20vw, 90px);
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto clamp(0.75rem, 2vw, 0.9375rem);
+            font-size: clamp(1.5rem, 5vw, 2.2rem);
+            color: white;
+            box-shadow: 0 15px 30px rgba(138, 43, 226, 0.3);
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .crew-card:hover .crew-avatar {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 20px 40px rgba(138, 43, 226, 0.4);
+        }
+
+        .crew-name {
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--light);
+            font-family: 'Playfair Display', serif;
+            line-height: 1.3;
+            word-wrap: break-word;
+        }
+
+        .crew-role {
+            color: var(--accent);
+            font-size: clamp(0.75rem, 3vw, 0.9rem);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: clamp(0.75rem, 2vw, 0.9375rem);
+            font-weight: 500;
+        }
+
+        .password-hint {
+            background: rgba(255, 255, 255, 0.05);
+            padding: clamp(0.5rem, 2vw, 0.75rem) clamp(0.75rem, 3vw, 0.9375rem);
+            border-radius: 1.25rem;
+            font-size: clamp(0.75rem, 3vw, 0.85rem);
+            color: var(--gray);
+            display: inline-block;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: auto;
+            word-break: break-word;
+        }
+
+        .password-hint i {
+            margin-right: 8px;
+            color: var(--accent);
+        }
+
+        /* Send Message Button */
+        .send-message-section {
+            text-align: center;
+            margin-top: clamp(2rem, 6vw, 5rem);
+            padding: clamp(1.5rem, 4vw, 2rem) clamp(1rem, 3vw, 1.25rem);
+            background: linear-gradient(135deg, rgba(138, 43, 226, 0.1), rgba(0, 206, 209, 0.1));
+            border-radius: clamp(1.25rem, 4vw, 1.5625rem);
+            border: 1px solid var(--glass-border);
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .send-message-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent), var(--secondary));
+        }
+
+        .send-message-title {
+            font-size: clamp(1.5rem, 5vw, 2rem);
+            margin-bottom: 1rem;
+            color: var(--light);
+            font-family: 'Playfair Display', serif;
+            line-height: 1.3;
+            padding: 0 1rem;
+        }
+
+        .send-message-desc {
+            color: var(--gray);
+            font-size: clamp(0.9rem, 4vw, 1.1rem);
+            max-width: min(600px, 90vw);
+            margin: 0 auto clamp(1rem, 3vw, 1.5625rem);
+            line-height: 1.6;
+            padding: 0 1rem;
+        }
+
+        .send-btn {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: clamp(1rem, 4vw, 1.125rem) clamp(1.5rem, 6vw, 2.1875rem);
+            font-size: clamp(1rem, 4vw, 1.1rem);
+            border-radius: 50px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: clamp(0.75rem, 3vw, 1rem);
+            transition: all 0.3s ease;
+            font-weight: 600;
+            box-shadow: 0 15px 35px rgba(138, 43, 226, 0.3);
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            max-width: min(400px, 90vw);
+            margin: 0 auto;
+            min-height: 56px;
+            touch-action: manipulation;
+        }
+
+        .send-btn:active {
+            transform: scale(0.98);
+        }
+
+        .send-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .send-btn:hover::before {
+            left: 100%;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(138, 43, 226, 0.4);
+        }
+
+        .send-btn i {
+            font-size: clamp(1rem, 4vw, 1.2rem);
+        }
+
+        .send-btn.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: linear-gradient(45deg, #666, #888);
+        }
+
+        .send-btn.locked:hover {
+            transform: none;
+            box-shadow: 0 15px 35px rgba(138, 43, 226, 0.3);
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 5, 16, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(20px);
+            padding: clamp(1rem, 3vw, 1.25rem);
+            touch-action: manipulation;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, rgba(30, 30, 60, 0.95), rgba(20, 20, 40, 0.95));
+            padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1rem, 3vw, 1.25rem);
+            border-radius: clamp(1.25rem, 4vw, 1.875rem);
+            width: 100%;
+            max-width: min(500px, 95vw);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
+            transform: translateY(50px) scale(0.95);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0) scale(1);
+        }
+
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--accent), var(--secondary));
+        }
+
+        .modal-title {
+            font-size: clamp(1.5rem, 5vw, 1.8rem);
+            margin-bottom: 1rem;
+            color: var(--light);
+            text-align: center;
+            font-family: 'Playfair Display', serif;
+            line-height: 1.3;
+        }
+
+        .modal-subtitle {
+            color: var(--gray);
+            text-align: center;
+            margin-bottom: clamp(1rem, 3vw, 1.5rem);
+            font-size: clamp(0.9rem, 3vw, 1rem);
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: clamp(1rem, 3vw, 1.25rem);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--light);
+            font-weight: 500;
+            font-size: clamp(0.9rem, 3vw, 0.95rem);
+        }
+
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: clamp(0.875rem, 3vw, 1rem);
+            border-radius: clamp(0.75rem, 3vw, 0.9375rem);
+            border: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--light);
+            font-size: clamp(0.9rem, 3vw, 1rem);
+            outline: none;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            min-height: 48px;
+        }
+
+        .form-input:focus, .form-textarea:focus {
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 3px rgba(0, 206, 209, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .modal-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: clamp(0.75rem, 2vw, 1rem);
+            margin-top: clamp(1rem, 3vw, 1.5rem);
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: clamp(0.875rem, 3vw, 1rem);
+            border-radius: clamp(0.75rem, 3vw, 0.9375rem);
+            border: none;
+            font-size: clamp(0.9rem, 3vw, 0.95rem);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: clamp(0.5rem, 2vw, 0.75rem);
+            min-width: min(140px, 45vw);
+            min-height: 48px;
+            touch-action: manipulation;
+        }
+
+        .modal-btn:active {
+            transform: scale(0.98);
+        }
+
+        .modal-btn.primary {
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            color: white;
+        }
+
+        .modal-btn.primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(138, 43, 226, 0.3);
+        }
+
+        .modal-btn.secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--light);
+            border: 1px solid var(--glass-border);
+        }
+
+        .modal-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Message Page */
+        .message-page {
+            min-height: 100vh;
+            padding: clamp(1.5rem, 4vw, 2rem) clamp(1rem, 3vw, 1.25rem);
+            display: none;
+            opacity: 0;
+            animation: fadeIn 0.8s forwards;
+            width: 100%;
+        }
+
+        .message-header {
+            text-align: center;
+            margin-bottom: clamp(2rem, 6vw, 3.75rem);
+            width: 100%;
+        }
+
+        .message-avatar {
+            width: clamp(90px, 25vw, 120px);
+            height: clamp(90px, 25vw, 120px);
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto clamp(1rem, 3vw, 1.25rem);
+            font-size: clamp(2rem, 6vw, 3rem);
+            color: white;
+            box-shadow: 0 20px 40px rgba(138, 43, 226, 0.3);
+            border: 5px solid rgba(255, 255, 255, 0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .message-crew-name {
+            font-size: clamp(1.8rem, 7vw, 2.5rem);
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-family: 'Dancing Script', cursive;
+            line-height: 1.2;
+            word-wrap: break-word;
+        }
+
+        .message-title {
+            font-size: clamp(0.9rem, 3vw, 1.2rem);
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+        }
+
+        .message-content {
+            max-width: min(800px, 95vw);
+            margin: 0 auto;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border-radius: clamp(1.25rem, 4vw, 1.875rem);
+            padding: clamp(1.5rem, 4vw, 2rem) clamp(1rem, 3vw, 1.25rem);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .message-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--accent), var(--secondary));
+        }
+
+        .message-text {
+            font-size: clamp(0.95rem, 3vw, 1.1rem);
+            line-height: 1.7;
+            margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+            color: rgba(255, 255, 255, 0.9);
+            text-align: justify;
+        }
+
+        .message-quote {
+            font-style: italic;
+            color: var(--accent);
+            padding: clamp(1rem, 3vw, 1.25rem);
+            background: linear-gradient(90deg, rgba(0, 206, 209, 0.1), transparent);
+            border-radius: clamp(0.75rem, 3vw, 0.9375rem);
+            border-left: 4px solid var(--accent);
+            margin: clamp(1rem, 3vw, 1.5rem) 0;
+            font-size: clamp(0.95rem, 3vw, 1.1rem);
+            font-family: 'Playfair Display', serif;
+            line-height: 1.5;
+        }
+
+        .message-signature {
+            text-align: right;
+            color: var(--gray);
+            margin-top: clamp(2rem, 6vw, 3.75rem);
+            padding-top: clamp(1rem, 3vw, 1.5rem);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: clamp(1rem, 4vw, 1.2rem);
+            font-family: 'Dancing Script', cursive;
+        }
+
+        .message-signature strong {
+            color: var(--light);
+            font-weight: 600;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: clamp(0.75rem, 2vw, 1rem);
+            margin-top: clamp(2rem, 6vw, 3.75rem);
+            width: 100%;
+        }
+
+        .action-btn {
+            padding: clamp(0.875rem, 3vw, 1rem) clamp(1.5rem, 4vw, 2rem);
+            border-radius: 50px;
+            border: none;
+            font-size: clamp(0.9rem, 3vw, 1rem);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: clamp(0.5rem, 2vw, 0.75rem);
+            min-width: min(160px, 45vw);
+            justify-content: center;
+            flex: 1;
+            max-width: min(300px, 100%);
+            min-height: 48px;
+            touch-action: manipulation;
+        }
+
+        .action-btn:active {
+            transform: scale(0.98);
+        }
+
+        .action-btn.back {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--light);
+            border: 1px solid var(--glass-border);
+        }
+
+        .action-btn.back:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .action-btn.message {
+            background: linear-gradient(45deg, var(--secondary), #FF8E9E);
+            color: white;
+        }
+
+        .action-btn.message:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(255, 107, 139, 0.3);
+        }
+
+        /* Background Particles */
+        .floating-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: floatParticle linear infinite;
+        }
+
+        @keyframes floatParticle {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.5;
+            }
+            90% {
+                opacity: 0.5;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        @keyframes glow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.8; }
+        }
+
+        /* Responsive breakpoints */
+        @media (max-width: 320px) {
+            html { font-size: 14px; }
+            .slideshow-container { height: 250px; }
+            .photo-frame { width: 120px; height: 120px; }
+            .crew-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (min-width: 321px) and (max-width: 480px) {
+            .slideshow-container { height: 300px; }
+            .photo-frame { width: 150px; height: 150px; }
+            .crew-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (min-width: 481px) and (max-width: 768px) {
+            .slideshow-container { height: 350px; }
+            .photo-frame { width: 200px; height: 200px; }
+            .crew-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .slideshow-container { height: 400px; }
+            .photo-frame { width: 250px; height: 250px; }
+            .crew-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        @media (max-height: 600px) and (orientation: landscape) {
+            .slideshow-container { height: 70vh; }
+            .photo-frame { width: clamp(120px, 25vh, 200px); height: clamp(120px, 25vh, 200px); }
+        }
+    </style>
+</head>
+<body>
+    <audio id="bgMusic" loop>
+        <source src="dream.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loader"></div>
+        <div class="loading-text">Loading Memories...</div>
+    </div>
+
+    <!-- Slideshow Page -->
+    <div class="slideshow-page" id="slideshowPage">
+        <h1 class="slideshow-title">Our Beautiful Memories</h1>
+        <p class="slideshow-subtitle">Mari kita lihat kembali momen-momen indah yang telah kita lewati bersama. Setiap foto adalah cerita, setiap kenangan adalah harta.</p>
+
+        <div class="slideshow-container" id="slideshowContainer">
+            <!-- Slides will be generated by JavaScript -->
+        </div>
+
+        <div class="slide-controls">
+            <button class="slide-btn" id="prevBtn" aria-label="Previous photo">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 12.5%;"></div>
+            </div>
+
+            <div class="slide-indicators" id="slideIndicators">
+                <!-- Indicators will be generated by JavaScript -->
+            </div>
+
+            <button class="slide-btn" id="nextBtn" aria-label="Next photo">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+
+        <button class="next-page-btn" id="nextPageBtn">
+            <i class="fas fa-heart"></i>
+            Lanjut ke Pesan Perpisahan
+        </button>
+    </div>
+
+    <!-- Background Particles -->
+    <div class="floating-particles" id="particlesContainer"></div>
+
+    <!-- Main Page (Button Crew) -->
+    <div class="main-page" id="mainPage">
+        <div class="main-container">
+            <header class="main-header">
+                <div class="title-container">
+                    <div class="title-glow">Farewell Moments</div>
+                    <h1 class="main-title">Farewell Moments</h1>
+                </div>
+                <p class="subtitle">Dalam setiap pertemuan ada cerita, dalam setiap perpisahan ada kenangan.</p>
+                <p>yaa here we are, pasti kalian dah ngerti kan, sebener e udah sering banget di kasih clue dari ibuk kita. danyap, aku resign hehe, makasih yaa udah jadi team yang baik tapi gabaik banget kecuali mama, dinay dan adalah pokoknya, yang dua terserah wkwk candaa</p>
+                <div class="quote">"how lucky i am to have something that makes saying goodbye so hard."</div>
+                <br>
+                <div>
+            <video
+              src="./img/baibai.MOV"
+              width="320"
+              height="180"
+              autoplay
+              muted
+              loop
+              playsinline
+            ></video
+            
+
+               
+                </style>
+                    <p>!ini vidio gais tunggu load agak lama nanti dia play!</p>
+                        <p>agak macet sih kalo di hp</p>
+
+                    </div>
+            </header>
+
+            <!-- Crew Section -->
+            <section class="crew-section">
+                <h2 class="section-title">Tim <span>Spesial</span> Kita</h2>
+                <div class="crew-grid" id="crewGrid">
+                    <!-- Crew Cards akan dibuat oleh JavaScript -->
+                </div>
+            </section>
+
+            <!-- Send Message Section -->
+            <section class="send-message-section">
+                <h3 class="send-message-title">Kirim Pesan Terakhir</h3>
+                <p class="send-message-desc">Setelah membaca pesan perpisahan dari crew, kamu bisa mengirim pesan khusus untuk Nabilla melalui WhatsApp.</p>
+                <button class="send-btn locked" id="sendToNabillaBtn" aria-label="Send message to Nabilla">
+                    <i class="fab fa-whatsapp"></i>
+                    Kirim Pesan ke Nabilla
+                    <span style="margin-left: 10px; font-size: 0.9rem; opacity: 0.8;">(Baca pesan dulu)</span>
+                </button>
+            </section>
+        </div>
+    </div>
+
+    <!-- Password Modal -->
+    <div class="modal-overlay" id="passwordModal">
+        <div class="modal-content">
+            <h3 class="modal-title">Masukkan Password</h3>
+            <p class="modal-subtitle">Untuk membaca pesan rahasia dari <span id="crewNameSpan" style="color: var(--accent); font-weight: 600;"></span></p>
+            
+            <div class="form-group">
+                <label class="form-label" for="passwordInput">Password Rahasia</label>
+                <input type="password" class="form-input" id="passwordInput" placeholder="Ketik password di sini..." aria-label="Password input">
+                <div style="text-align: right; margin-top: 5px;">
+                    <button id="togglePassword" style="background: none; border: none; color: var(--accent); cursor: pointer; font-size: 0.9rem;" aria-label="Toggle password visibility">
+                        <i class="fas fa-eye"></i> Tampilkan
+                    </button>
+                </div>
+            </div>
+
+            <div id="errorMessage" style="color: var(--secondary); text-align: center; margin: 15px 0; min-height: 20px;" role="alert"></div>
+
+            <div class="modal-buttons">
+                <button class="modal-btn primary" id="submitPassword" aria-label="Submit password">
+                    <i class="fas fa-unlock"></i> Buka Pesan
+                </button>
+                <button class="modal-btn secondary" id="closeModal" aria-label="Close modal">
+                    <i class="fas fa-times"></i> Batal
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Modal -->
+    <div class="modal-overlay" id="messageModal">
+        <div class="modal-content">
+            <h3 class="modal-title">Kirim Pesan ke Nabilla</h3>
+            <p class="modal-subtitle">Sampaikan kata-kata terakhirmu dengan penuh makna</p>
+            
+            <form id="messageForm">
+                <div class="form-group">
+                    <label class="form-label" for="senderName">Nama Kamu</label>
+                    <input type="text" class="form-input" id="senderName" placeholder="Masukkan nama kamu" required aria-label="Your name">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="senderMessage">Pesan Spesial</label>
+                    <textarea class="form-textarea" id="senderMessage" placeholder="Tulis pesan perpisahanmu di sini..." required aria-label="Your message"></textarea>
+                </div>
+
+                <div class="modal-buttons">
+                    <button type="submit" class="modal-btn primary" aria-label="Send via WhatsApp">
+                        <i class="fab fa-whatsapp"></i> Kirim via WhatsApp
+                    </button>
+                    <button type="button" class="modal-btn secondary" id="closeMessageModal" aria-label="Cancel">
+                        <i class="fas fa-times"></i> Batalkan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Message Page -->
+    <div class="main-container message-page" id="messagePage">
+        <div class="message-header">
+            <div class="message-avatar" id="crewAvatar">
+                <!-- Icon akan di-set oleh JS -->
+            </div>
+            <h1 class="message-crew-name" id="messageCrewName"></h1>
+            <div class="message-title" id="messageRole"></div>
+        </div>
+
+        <div class="message-content">
+            <div class="message-text" id="messageText">
+                <!-- Message akan di-set oleh JS -->
+            </div>
+
+            <div class="message-quote" id="messageQuote">
+                <!-- Quote akan di-set oleh JS -->
+            </div>
+
+            <div class="message-signature" id="messageSignature">
+                <!-- Signature akan di-set oleh JS -->
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="action-btn back" id="backButton" aria-label="Go back">
+                <i class="fas fa-arrow-left"></i> Kembali
+            </button>
+            <button class="action-btn message" id="openMessageBtn" aria-label="Send message to Nabilla">
+                <i class="fab fa-whatsapp"></i> Kirim Pesan ke Nabilla
+            </button>
+        </div>
+    </div>
+
+    <script>
+        class FarewellApp {
+            constructor() {
+                this.currentSlide = 0;
+                this.totalSlides = 8;
+                this.autoPlayInterval = null;
+                this.slideDuration = 5000;
+                this.currentCrew = null;
+                this.hasReadMessage = false;
+                this.isMobile = window.innerWidth <= 768;
+                
+                // Data slideshow yang benar
+                this.slidesData = [
+                    { 
+                        title: "", 
+                        date: "👀", 
+                        desc: "Kalo dini ngga pap, ga bakal dapet ekspresi mas reifaldy yang sebahagia itu", 
+                        image: "background.jpeg",
+                        color: "#8A2BE2" 
+                    },
+                    { 
+                        title: "😭", 
+                        date: "", 
+                        desc: "Belakang ngga kebagian", 
+                        image: "02.jpeg",
+                        color: "#FF6B8B" 
+                    },
+                    { 
+                        title: "", 
+                        date: "sopan ya", 
+                        desc: "emotnya yang belakang tuh", 
+                        image: "l.jpeg",
+                        color: "#00CED1" 
+                    },
+                    { 
+                        title: "", 
+                        date: "", 
+                        desc: "eh siapa nii", 
+                        image: "q.jpeg",
+                        color: "#FFD700" 
+                    },
+                    { 
+                        title: "", 
+                        date: "", 
+                        desc: "", 
+                        image: "02.jpeg",
+                        color: "#FF1493" 
+                    },
+                    { 
+                        title: "", 
+                        date: "", 
+                        desc: "", 
+                        image: "02.jpeg",
+                        color: "#9370DB" 
+                    },
+                    { 
+                        title: "", 
+                        date: "", 
+                        desc: "", 
+                        image: "background.jpeg",
+                        color: "#7CFC00" 
+                    },
+                    { 
+                        title: "", 
+                        date: "", 
+                        desc: "", 
+                        image: "q.jpeg",
+                        color: "#FF4500" 
+                    }
+                ];
+
+                // Data crew dengan PASSWORD TYPE HIDDEN
+                this.crewData = [
+                    { 
+                        name: "kak sinar lintang cha", 
+                        role: "Team Captain", 
+                        icon: "crown", 
+                        password: {
+                            type: "hidden",
+                            value: "kakakcantikpunyabanyakpacar"
+                        }
+                    },
+                    { 
+                        name: "dinay el", 
+                        role: "rakyat kecil", 
+                        icon: "sun", 
+                        password: {
+                            type: "hidden",
+                            value: "adikdinayel"
+                        }
+                    },
+                    { 
+                        name: "briann reno", 
+                        role: "se dinoyo", 
+                        icon: "star", 
+                        password: {
+                            type: "hidden",
+                            value: "agendakan"
+                        }
+                    },
+                    { 
+                        name: "reifaldy", 
+                        role: "diy maker", 
+                        icon: "rocket", 
+                        password: {
+                            type: "hidden",
+                            value: "abangreifaldy"
+                        }
+                    },
+                    { 
+                        name: "adit", 
+                        role: "terserah", 
+                        icon: {
+                            type: "image",
+                            src: "./img/a.jpeg",
+                            width: 100,
+                            height: 100
+                        },
+                        password: {
+                            type: "hidden",
+                            value: "adittolongindit"
+                        }
+                    }
+                ];
+
+                this.init();
+            }
+            
+            init() {
+                this.initMusic();
+                this.initSlideshow();
+                this.initMainPage();
+                this.initEventListeners();
+                this.hideLoadingScreen();
+                this.createParticles();
+            }
+            
+            initMusic() {
+                const audio = document.getElementById('bgMusic');
+                audio.volume = 0.5;
+                
+                // Autoplay dengan user interaction
+                document.addEventListener('click', () => {
+                    audio.play().catch(e => console.log('Autoplay prevented:', e));
+                }, { once: true });
+            }
+            
+            hideLoadingScreen() {
+                setTimeout(() => {
+                    const loadingScreen = document.getElementById('loadingScreen');
+                    if (loadingScreen) {
+                        loadingScreen.classList.add('hidden');
+                        setTimeout(() => {
+                            loadingScreen.style.display = 'none';
+                        }, 1000);
+                    }
+                }, 2000);
+            }
+            
+            initSlideshow() {
+                this.createSlideshowSlides();
+                this.createSlideIndicators();
+                this.showSlide(0);
+                this.startAutoPlay();
+            }
+            
+            createSlideshowSlides() {
+                const container = document.getElementById('slideshowContainer');
+                if (!container) return;
+
+                container.innerHTML = ''; // Clear existing slides
+
+                this.slidesData.forEach((memory, index) => {
+                    const slide = document.createElement('div');
+                    slide.className = 'slide';
+                    slide.id = `slide-${index}`;
+                    if (index === 0) slide.classList.add('active');
+
+                    slide.innerHTML = `
+                        <div class="photo-frame" style="background: linear-gradient(135deg, ${memory.color}80, ${memory.color});">
+                            <img src="./img/${memory.image}" alt="${memory.title}" 
+                                 onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:3rem;\'>📷</div>'">
+                        </div>
+                        <div class="photo-info">
+                            <h3 class="photo-title">${memory.title}</h3>
+                            <div class="photo-date">${memory.date}</div>
+                            <p class="photo-description">${memory.desc}</p>
+                        </div>
+                    `;
+
+                    container.appendChild(slide);
+                });
+            }
+            
+            createSlideIndicators() {
+                const container = document.getElementById('slideIndicators');
+                if (!container) return;
+                
+                container.innerHTML = ''; // Clear existing indicators
+                
+                for (let i = 0; i < this.totalSlides; i++) {
+                    const indicator = document.createElement('div');
+                    indicator.className = `indicator ${i === 0 ? 'active' : ''}`;
+                    indicator.dataset.index = i;
+                    
+                    indicator.addEventListener('click', () => {
+                        this.showSlide(i);
+                        this.resetAutoPlay();
+                    });
+                    
+                    container.appendChild(indicator);
+                }
+            }
+            
+            showSlide(index) {
+                if (index < 0) index = this.totalSlides - 1;
+                if (index >= this.totalSlides) index = 0;
+                
+                const slides = document.querySelectorAll('.slide');
+                const indicators = document.querySelectorAll('.indicator');
+                
+                // Fade out current
+                slides.forEach(slide => {
+                    slide.classList.remove('active');
+                    slide.classList.remove('fading-out');
+                });
+                indicators.forEach(ind => ind.classList.remove('active'));
+                
+                // Fade in next
+                setTimeout(() => {
+                    const nextSlide = document.getElementById(`slide-${index}`);
+                    const nextIndicator = document.querySelector(`.indicator[data-index="${index}"]`);
+                    
+                    if (nextSlide) nextSlide.classList.add('active');
+                    if (nextIndicator) nextIndicator.classList.add('active');
+                    
+                    this.currentSlide = index;
+                    this.updateProgress();
+                }, 50);
+            }
+            
+            nextSlide() {
+                const currentSlide = document.getElementById(`slide-${this.currentSlide}`);
+                if (currentSlide) {
+                    currentSlide.classList.add('fading-out');
+                }
+                
+                setTimeout(() => {
+                    this.showSlide(this.currentSlide + 1);
+                    this.resetAutoPlay();
+                }, 500);
+            }
+            
+            prevSlide() {
+                const currentSlide = document.getElementById(`slide-${this.currentSlide}`);
+                if (currentSlide) {
+                    currentSlide.classList.add('fading-out');
+                }
+                
+                setTimeout(() => {
+                    this.showSlide(this.currentSlide - 1);
+                    this.resetAutoPlay();
+                }, 500);
+            }
+            
+            startAutoPlay() {
+                if (this.autoPlayInterval) {
+                    clearInterval(this.autoPlayInterval);
+                }
+                
+                this.autoPlayInterval = setInterval(() => {
+                    this.nextSlide();
+                }, this.slideDuration);
+            }
+            
+            resetAutoPlay() {
+                if (this.autoPlayInterval) {
+                    clearInterval(this.autoPlayInterval);
+                    this.startAutoPlay();
+                }
+            }
+            
+            updateProgress() {
+                const progressFill = document.getElementById('progressFill');
+                if (progressFill) {
+                    const progress = ((this.currentSlide + 1) / this.totalSlides) * 100;
+                    progressFill.style.width = `${progress}%`;
+                }
+            }
+            
+            createParticles() {
+                const container = document.getElementById('particlesContainer');
+                if (!container) return;
+                
+                const particleCount = this.isMobile ? 15 : 30;
+                const colors = ['#8A2BE2', '#FF6B8B', '#00CED1', '#FFD700'];
+                
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    
+                    const size = Math.random() * 3 + 2;
+                    const left = Math.random() * 100;
+                    const delay = Math.random() * 20;
+                    const duration = Math.random() * 10 + 10;
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    
+                    particle.style.cssText = `
+                        width: ${size}px;
+                        height: ${size}px;
+                        left: ${left}%;
+                        top: 100vh;
+                        background: ${color};
+                        animation-delay: ${delay}s;
+                        animation-duration: ${duration}s;
+                    `;
+                    
+                    container.appendChild(particle);
+                }
+            }
+            
+            initMainPage() {
+                this.createCrewCards();
+            }
+            
+            createCrewCards() {
+                const container = document.getElementById('crewGrid');
+                if (!container) return;
+                
+                container.innerHTML = ''; // Clear existing cards
+                
+                this.crewData.forEach(member => {
+                    const card = document.createElement('div');
+                    card.className = 'crew-card';
+                    card.dataset.crew = member.name;
+                    // Akses password.value dari object password yang baru
+                    card.dataset.password = member.password.value;
+                    card.setAttribute('role', 'button');
+                    card.setAttribute('tabindex', '0');
+                    card.setAttribute('aria-label', `Buka pesan dari ${member.name}`);
+                    
+                    // Tampilkan password sesuai type-nya
+                    const passwordDisplay = member.password.type === "hidden" 
+                        ? '<div class="password-hint"><i class="fas fa-key"></i> Password: (tersembunyi)</div>'
+                        : `<div class="password-hint"><i class="fas fa-key"></i> Password: ${member.password.value}</div>`;
+                    
+                    card.innerHTML = `
+                        <div class="card-glow"></div>
+                        <div class="crew-avatar">
+                            ${this.getIconHTML(member.icon)}
+                        </div>
+                        <h3 class="crew-name">${member.name}</h3>
+                        <div class="crew-role">${member.role}</div>
+                        ${passwordDisplay}
+                    `;
+                    
+                    container.appendChild(card);
+                });
+            }
+            
+            getIconHTML(iconData) {
+                if (typeof iconData === 'object' && iconData.type === 'image') {
+                    return `<img src="${iconData.src}" width="${iconData.width}" height="${iconData.height}" alt="avatar" style="border-radius: 50%;">`;
+                } else {
+                    return `<i class="fas fa-${iconData}"></i>`;
+                }
+            }
+            
+            initEventListeners() {
+                // Slideshow controls
+                document.getElementById('prevBtn').addEventListener('click', () => this.prevSlide());
+                document.getElementById('nextBtn').addEventListener('click', () => this.nextSlide());
+                document.getElementById('nextPageBtn').addEventListener('click', () => this.goToMainPage());
+                
+                // Crew card clicks
+                document.addEventListener('click', (e) => {
+                    const card = e.target.closest('.crew-card');
+                    if (card) {
+                        this.currentCrew = card.dataset.crew;
+                        this.openPasswordModal();
+                    }
+                });
+                
+                // Crew card keyboard navigation
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        const card = document.activeElement.closest('.crew-card');
+                        if (card) {
+                            e.preventDefault();
+                            this.currentCrew = card.dataset.crew;
+                            this.openPasswordModal();
+                        }
+                    }
+                });
+                
+                // Password modal
+                document.getElementById('togglePassword').addEventListener('click', () => this.togglePasswordVisibility());
+                document.getElementById('submitPassword').addEventListener('click', () => this.checkPassword());
+                document.getElementById('closeModal').addEventListener('click', () => this.closeModal('passwordModal'));
+                
+                // Message modal
+                document.getElementById('sendToNabillaBtn').addEventListener('click', () => this.openMessageModal());
+                document.getElementById('openMessageBtn').addEventListener('click', () => this.openMessageModal());
+                document.getElementById('closeMessageModal').addEventListener('click', () => this.closeModal('messageModal'));
+                document.getElementById('messageForm').addEventListener('submit', (e) => this.sendMessage(e));
+                
+                // Navigation
+                document.getElementById('backButton').addEventListener('click', () => this.backToMain());
+                
+                // Keyboard shortcuts
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowLeft') this.prevSlide();
+                    if (e.key === 'ArrowRight') this.nextSlide();
+                    if (e.key === 'Escape') this.closeAllModals();
+                    if (e.key === 'Enter' && document.getElementById('passwordInput') === document.activeElement) {
+                        this.checkPassword();
+                    }
+                });
+                
+                // Touch gestures for slideshow
+                this.setupTouchGestures();
+            }
+            
+            setupTouchGestures() {
+                let touchStartX = 0;
+                let touchEndX = 0;
+                
+                const container = document.getElementById('slideshowContainer');
+                if (!container) return;
+                
+                container.addEventListener('touchstart', (e) => {
+                    touchStartX = e.changedTouches[0].screenX;
+                }, { passive: true });
+                
+                container.addEventListener('touchend', (e) => {
+                    touchEndX = e.changedTouches[0].screenX;
+                    this.handleSwipe(touchStartX, touchEndX);
+                }, { passive: true });
+            }
+            
+            handleSwipe(startX, endX) {
+                const minSwipeDistance = 50;
+                const diff = startX - endX;
+                
+                if (Math.abs(diff) > minSwipeDistance) {
+                    if (diff > 0) {
+                        this.nextSlide();
+                    } else {
+                        this.prevSlide();
+                    }
+                }
+            }
+            
+            goToMainPage() {
+                if (this.autoPlayInterval) {
+                    clearInterval(this.autoPlayInterval);
+                }
+                
+                const slideshowPage = document.getElementById('slideshowPage');
+                if (slideshowPage) {
+                    slideshowPage.style.opacity = '0';
+                    slideshowPage.style.transition = 'opacity 1s ease';
+                    
+                    setTimeout(() => {
+                        slideshowPage.style.display = 'none';
+                        
+                        const mainPage = document.getElementById('mainPage');
+                        if (mainPage) {
+                            mainPage.classList.add('active');
+                            this.animateMainPage();
+                        }
+                    }, 1000);
+                }
+            }
+            
+            animateMainPage() {
+                const cards = document.querySelectorAll('.crew-card');
+                cards.forEach((card, index) => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(30px)';
+                    
+                    setTimeout(() => {
+                        card.style.transition = 'all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, 300 + (index * 100));
+                });
+            }
+            
+            openPasswordModal() {
+                document.getElementById('crewNameSpan').textContent = this.currentCrew;
+                document.getElementById('passwordModal').classList.add('active');
+                document.getElementById('passwordInput').focus();
+                document.getElementById('passwordInput').value = '';
+                document.getElementById('errorMessage').textContent = '';
+            }
+            
+            togglePasswordVisibility() {
+                const input = document.getElementById('passwordInput');
+                const button = document.getElementById('togglePassword');
+                
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    button.innerHTML = '<i class="fas fa-eye-slash"></i> Sembunyikan';
+                } else {
+                    input.type = 'password';
+                    button.innerHTML = '<i class="fas fa-eye"></i> Tampilkan';
+                }
+            }
+            
+            checkPassword() {
+                const input = document.getElementById('passwordInput');
+                const errorMsg = document.getElementById('errorMessage');
+                const enteredPassword = input.value.trim();
+                
+                const crewMember = this.crewData.find(member => member.name === this.currentCrew);
+                
+                // Akses password.value dari object password
+                const correctPassword = crewMember.password.value;
+                
+                if (enteredPassword === correctPassword) {
+                    this.showMessagePage();
+                    this.closeModal('passwordModal');
+                    this.enableNabillaButton();
+                } else {
+                    errorMsg.textContent = '❌ Password salah! Coba lagi.';
+                    input.style.borderColor = 'var(--secondary)';
+                    input.style.animation = 'shake 0.5s';
+                    setTimeout(() => {
+                        input.style.animation = '';
+                        input.style.borderColor = '';
+                    }, 500);
+                }
+            }
+            
+            showMessagePage() {
+                document.getElementById('mainPage').classList.remove('active');
+                const messagePage = document.getElementById('messagePage');
+                messagePage.style.display = 'block';
+                messagePage.style.opacity = '0';
+                
+                setTimeout(() => {
+                    messagePage.style.opacity = '1';
+                }, 50);
+                
+                const crewMember = this.crewData.find(member => member.name === this.currentCrew);
+                const messageData = this.getCrewMessage(this.currentCrew);
+                
+                document.getElementById('crewAvatar').innerHTML = this.getIconHTML(crewMember.icon);
+                document.getElementById('messageCrewName').textContent = this.currentCrew;
+                document.getElementById('messageRole').textContent = crewMember.role;
+                document.getElementById('messageText').innerHTML = messageData.message;
+                document.getElementById('messageQuote').textContent = messageData.quote;
+                document.getElementById('messageSignature').innerHTML = messageData.signature;
+            }
+            
+            getCrewMessage(crewName) {
+                const messages = {
+                    "kak sinar lintang cha": {
+                        message: `haiii kak \<br><br>
+                        kak rasanya baru kemarin kakak jadi ibuk di dinoyoo terus kita main bareng. <br><br>
+                        makasihh bangett yaa udah mau ajak main akuu, beruntung banget punya ibuk kayak kakak tuhh. makasii udah baik banget sama aku, maaf ya kak kalau aku ada salah 🙏🏻<br><br>
+                       semoga suka ya sama yang di meja itu, yang cuma seberapa itu .`,
+                        quote: "Thank you for your exceptional leadership and guidance. It's a privilege to learn and grow under your leadership under you.",
+                        signature: "See youu kak,<br><strong>kak sinar lintang cha</strong>"
+                    },
+                    "dinay el": {
+                        message: `haii dinayy!<br><br>
+                       makasii banyak yaa udah bikin hari² jadi lebih seru waktu kerja, semogaa impian kamu tercapai jugaa ya dinayy,<br><br>
+                        semangat yaa jangan sedih sedih teruss itu aku ada coklat buat kamu biar ngga sedih .<br><br>
+                        cuma dikit sii, moga bisa baikin mood kamu, yanglainnya bagi bagii yaa, bilangin tuh ke gender sebelah gausah gragas wkwk.`,
+                        quote: "makasii yaa adikk, seru banget ada kamu.",
+                        signature: "baik' yaa,<br><strong>dinay el</strong>"
+                    },
+                    "briann reno": {
+                        message: `haii ommm,<br><br>
+                        aku sempet kepikiran untung aku resignnyaa januari yaa haha, semogaa kamu ngga nyesel yaa main sama akuu, gas agendakan main lagii. baibaiii.<br><br>
+                       di jaga kesehatannya yaa, itu kopinya diminum biar bisa agetin badan kalo kehujanan,kemarin mau beliin vitamin juga tapi lupa.<br><br>
+                      gitu aja kali ya. cerita"yaaa nanti.oiya tolong balaskan dendam ku sama yang itu wkwkwwk. babaii`,
+                        quote: "itu awas jatoh.",
+                        signature: "semnagatt yaa,<br><strong>om briann reno</strong>"
+                    },
+                    "reifaldy": {
+                        message: `haii <br><br>
+                       sorry yaa mas kalo aku ada salah dan yang katae terkesan baper baperan itu, ntar gaada aku yang baperan lagi kok aman aja, titip dinay yaa. makasihh udah selalu pip.kemarin aku ada warisan semoga suka ya, aku duluan yaa mas baiibai.<br><br>`,
+                        quote: "sekali kalijangan suka bener gitu dong kalo ngomong😭 . ",
+                        signature: "maaf yaa,<br><strong>reifaldy</strong>"
+                    },
+                    "adit": {
+                        message: `halo anak dakjal,<br><br>
+                       hari ini udah gaada samsak nihh. maaf yaa kalo aku ada salah dan yang kata e terkesan baperan itu. makasi udah nge jokes buat ngehibur aku. aku pamitt yaa, baibaii🫸🏻🤙🏻.<br><br>
+                        saiki ws gnk sng nesuan ga se, pasti seru nge shift gaada aku .<br><br>
+                      tadi aku ada warisan di meja dapur, jan gragas yee, bagi bagi sama yang lain. `,
+                        quote: "makasih sudah meninggalkan lebam dan ada lah pokoknya.",
+                        signature: "baii,<br><strong>adit</strong>"
+                    }
+                };
+                
+                return messages[crewName] || {
+                    message: `Halo!<br><br>Ini adalah pesan rahasia untukmu. Terima kasih telah menjadi bagian dari perjalanan ini.<br><br>Selalu ingat momen-momen indah yang kita lewati bersama.`,
+                    quote: "Kenangan adalah harta tak ternilai.",
+                    signature: `Dengan penuh kasih sayang,<br><strong>${crewName}</strong>`
+                };
+            }
+            
+            backToMain() {
+                document.getElementById('messagePage').style.display = 'none';
+                document.getElementById('mainPage').classList.add('active');
+            }
+            
+            enableNabillaButton() {
+                this.hasReadMessage = true;
+                const button = document.getElementById('sendToNabillaBtn');
+                button.classList.remove('locked');
+                button.innerHTML = `
+                    <i class="fab fa-whatsapp"></i>
+                    Kirim Pesan ke Nabilla
+                    <span style="margin-left: 10px; font-size: 0.9rem; opacity: 0.8;">(Sekarang aktif!)</span>
+                `;
+                button.style.animation = 'glow 2s infinite';
+                
+                // Show notification
+                this.showNotification('💌 Sekarang kamu bisa kirim pesan ke Nabilla!');
+            }
+            
+            openMessageModal() {
+                if (!this.hasReadMessage) {
+                    this.showNotification('📖 Baca pesan perpisahan dulu ya!');
+                    return;
+                }
+                
+                document.getElementById('messageModal').classList.add('active');
+                document.getElementById('senderName').focus();
+            }
+            
+            sendMessage(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('senderName').value.trim();
+                const message = document.getElementById('senderMessage').value.trim();
+                
+                if (!name || !message) {
+                    this.showNotification('❌ Harap isi semua field!');
+                    return;
+                }
+                
+                // Format WhatsApp message
+                const whatsappMessage = encodeURIComponent(
+                    `Halo Nabilla! 👋\n\n` +
+                    `Ini pesan dari *${name}* (dari Farewell Moments):\n\n` +
+                    `${message}\n\n` +
+                    `---\n` +
+                    `*Farewell Moments*\n` +
+                    `Keep the memories alive! ❤️`
+                );
+                
+                // Ganti dengan nomor WhatsApp yang benar
+                const phoneNumber = "6281358738442";
+                
+                window.open(`https://wa.me/${phoneNumber}?text=${whatsappMessage}`, '_blank');
+                
+                // Reset form
+                document.getElementById('senderName').value = '';
+                document.getElementById('senderMessage').value = '';
+                this.closeModal('messageModal');
+                
+                this.showNotification('✅ Pesan berhasil dikirim! WhatsApp akan terbuka.');
+            }
+            
+            closeModal(modalId) {
+                document.getElementById(modalId).classList.remove('active');
+            }
+            
+            closeAllModals() {
+                document.querySelectorAll('.modal-overlay.active').forEach(modal => {
+                    modal.classList.remove('active');
+                });
+            }
+            
+            showNotification(text) {
+                // Create notification element
+                const notification = document.createElement('div');
+                notification.className = 'notification';
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: linear-gradient(45deg, var(--primary), var(--accent));
+                    color: white;
+                    padding: 12px 20px;
+                    border-radius: 10px;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                    z-index: 10000;
+                    animation: fadeIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+                    font-family: 'Poppins', sans-serif;
+                    font-size: 0.9rem;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                `;
+                
+                notification.innerHTML = `<i class="fas fa-info-circle"></i> ${text}`;
+                document.body.appendChild(notification);
+                
+                // Remove after 3 seconds
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 3000);
+            }
+        }
+
+        // Initialize app when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                window.app = new FarewellApp();
+                console.log('🎉 Farewell App loaded successfully!');
+            } catch (error) {
+                console.error('Error loading app:', error);
+                document.getElementById('loadingScreen').innerHTML = `
+                    <div style="text-align: center; color: var(--accent);">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                        <h2>Oops! Something went wrong</h2>
+                        <p>Please refresh the page or try again later.</p>
+                        <button onclick="window.location.reload()" style="margin-top: 1rem; padding: 10px 20px; background: var(--primary); color: white; border: none; border-radius: 5px; cursor: pointer;">
+                            Refresh Page
+                        </button>
+                    </div>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>
